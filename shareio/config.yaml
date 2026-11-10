@@ -1,7 +1,7 @@
 ---
 name: ShareIo
 url: https://github.com/arobe14040/ShareIo
-version: edge
+version: 3.0.0
 slug: shareio
 arch:
   - aarch64
