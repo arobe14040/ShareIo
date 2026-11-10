@@ -314,18 +314,28 @@ body.dark #content label[class*="dark:border-orange"] {
 
 /* ---------- Home ---------- */
 
-.sio-hero {
-  width: min(320px, 80vw);
-  height: auto;
+/*
+ * Done in CSS only: the app redraws these elements itself, so changing
+ * them from JavaScript would be undone or confuse it.
+ */
+
+/* Illustration instead of the share icon */
+#content div.text-4xl:has(> i.fa-share-alt) > i.fa-share-alt {
   display: block;
-  margin: 0 auto -6px;
+  width: min(320px, 80vw);
+  aspect-ratio: 8 / 5;
+  font-size: 0;
+  background: url("img/hero.svg") center / contain no-repeat;
   animation: sio-float 6s ease-in-out infinite;
 }
+#content div.text-4xl:has(> i.fa-share-alt) > i.fa-share-alt::before { content: none; }
 @keyframes sio-float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
 }
-.sio-hero-title {
+
+/* Gradient title */
+#content div.text-4xl:has(> i.fa-share-alt) > span {
   font-size: clamp(1.7rem, 4vw, 2.3rem);
   font-weight: 800;
   letter-spacing: -0.03em;
@@ -334,41 +344,39 @@ body.dark #content label[class*="dark:border-orange"] {
   background-clip: text;
   color: transparent !important;
 }
-.sio-hero-sub {
+
+/* Subtitle */
+#content div.text-4xl:has(> i.fa-share-alt)::after {
+  content: "Drop, paste or pick files, then send the link.";
   display: block;
-  margin-top: .35rem;
+  margin-top: .4rem;
   font-size: 1rem;
   font-weight: 450;
   color: var(--sio-muted);
-  letter-spacing: 0;
+  text-align: center;
 }
-.sio-kbd-hints {
+
+/* Keyboard shortcut hints under the buttons */
+#content div[class*="md:w-2/3"]:has(div.text-4xl > i.fa-share-alt)::after {
+  content: "Shortcuts:  N  new share   \00B7   A  new alias   \00B7   /  search";
+  white-space: pre;
+  display: block;
   margin-top: 1.25rem;
   font-size: .8rem;
   color: var(--sio-muted);
   text-align: center;
 }
-kbd.sio-kbd {
-  font-family: var(--sio-mono);
-  font-size: .72rem;
-  padding: .1rem .4rem;
-  border-radius: 6px;
-  border: 1px solid var(--sio-border);
-  border-bottom-width: 2px;
-  background: var(--sio-surface);
-  color: var(--sio-text);
-}
 
 /* ---------- Upload ---------- */
 
-.sio-dropzone {
+[data-sio-zone] {
   border: 2px dashed color-mix(in srgb, var(--sio-brand-1) 45%, var(--sio-border)) !important;
   border-radius: var(--sio-radius-lg) !important;
   background:
     radial-gradient(120% 120% at 50% 0%, color-mix(in srgb, var(--sio-brand-1) 9%, transparent), transparent 60%),
     var(--sio-surface) !important;
 }
-.sio-dropzone:hover { border-color: var(--sio-brand-1) !important; }
+[data-sio-zone]:hover { border-color: var(--sio-brand-1) !important; }
 
 .sio-drop-overlay {
   position: fixed;

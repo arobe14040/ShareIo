@@ -5,7 +5,6 @@
  * optional: if an element is not found, the feature simply does nothing.
  *
  *  - Follows the system light/dark preference until a theme is picked
- *  - New home screen with illustration and keyboard hints
  *  - Paste files (Ctrl/Cmd+V) and drop files anywhere to upload
  *  - Share link: native "Share..." sheet, "Save QR" image, copy toast
  *  - Keyboard shortcuts: N = new share, A = new alias, / = search
@@ -26,10 +25,6 @@
 
   function $(sel, root) { return (root || document).querySelector(sel); }
   function $all(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
-  function path() {
-    var p = location.pathname;
-    return prefix && p.indexOf(prefix) === 0 ? p.slice(prefix.length) : p;
-  }
   function typing(ev) {
     var t = ev.target;
     return t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName));
@@ -44,7 +39,7 @@
       toastBox.className = 'sio-toasts';
       toastBox.setAttribute('role', 'status');
       toastBox.setAttribute('aria-live', 'polite');
-      document.body.appendChild(toastBox);
+      document.documentElement.appendChild(toastBox);
     }
     var el = document.createElement('div');
     el.className = 'sio-toast';
@@ -72,36 +67,6 @@
     (mq.addEventListener ? mq.addEventListener.bind(mq, 'change') : mq.addListener.bind(mq))(applySystemTheme);
   }
 
-  /* ---------- Home screen ---------- */
-
-  function enhanceHome() {
-    if (!/\/app\/home\/?$/.test(path())) return;
-    var icon = $('#content i.fa-share-alt');
-    if (!icon || icon.dataset.sio) return;
-    icon.dataset.sio = '1';
-    var img = document.createElement('img');
-    img.src = assetBase + 'img/hero.svg';
-    img.alt = '';
-    img.className = 'sio-hero';
-    icon.replaceWith(img);
-    var title = img.parentElement && img.parentElement.querySelector('span');
-    if (title) {
-      title.classList.add('sio-hero-title');
-      var sub = document.createElement('span');
-      sub.className = 'sio-hero-sub';
-      sub.textContent = 'Drop, paste or pick files, then send the link.';
-      title.appendChild(sub);
-    }
-    var card = img.closest('div[class*="md:w-2/3"]');
-    if (card && !card.querySelector('.sio-kbd-hints')) {
-      var hints = document.createElement('div');
-      hints.className = 'sio-kbd-hints';
-      hints.innerHTML = 'Shortcuts: <kbd class="sio-kbd">N</kbd> new share &middot; ' +
-        '<kbd class="sio-kbd">A</kbd> new alias &middot; <kbd class="sio-kbd">/</kbd> search';
-      card.appendChild(hints);
-    }
-  }
-
   /* ---------- Upload: dropzone, paste, window drop ---------- */
 
   function fileInput() { return $('#content input[type="file"]'); }
@@ -117,7 +82,7 @@
     Array.prototype.forEach.call(files, function (f) { dt.items.add(f); });
     // Hand the files to the app's own dropzone: it appends to the list,
     // while setting the file input again can replace or be ignored.
-    var zone = $('.sio-dropzone');
+    var zone = $('[data-sio-zone]');
     if (zone && typeof DragEvent === 'function') {
       forwarding = true;
       try {
@@ -143,10 +108,8 @@
     $all('#content div').forEach(function (d) {
       if (d.contains(input) && /drop files/i.test(d.textContent || '')) zone = d;
     });
-    if (zone && !zone.dataset.sioZone) {
-      zone.dataset.sioZone = '1';
-      zone.classList.add('sio-dropzone');
-    }
+    // A data attribute survives the app redrawing the element; a class would not.
+    if (zone && !zone.hasAttribute('data-sio-zone')) zone.setAttribute('data-sio-zone', '');
   }
 
   document.addEventListener('paste', function (ev) {
@@ -169,7 +132,7 @@
       overlay = document.createElement('div');
       overlay.className = 'sio-drop-overlay';
       overlay.innerHTML = '<div><img alt="" src="' + assetBase + 'img/icon.svg">Drop to add files<small>They will be added to this share</small></div>';
-      document.body.appendChild(overlay);
+      document.documentElement.appendChild(overlay);
     }
     overlay.classList.toggle('is-active', on);
   }
@@ -310,7 +273,6 @@
   function enhance() {
     queued = false;
     try {
-      enhanceHome();
       enhanceDropzone();
       enhanceShareLink();
     } catch (e) {
