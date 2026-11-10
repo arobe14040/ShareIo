@@ -40,6 +40,10 @@ RUN set -eux; \
 COPY --chown=abc:abc rootfs /
 WORKDIR /data/sharry
 
+# Sharry (Java + database migrations) can take a while to start
+HEALTHCHECK --interval=30s --timeout=10s --start-period=3m --retries=3 \
+    CMD curl --fail --silent --output /dev/null http://127.0.0.1:9090/api/v2/open/info/version || exit 1
+
 # Build arguments
 ARG BUILD_ARCH
 ARG BUILD_DATE
