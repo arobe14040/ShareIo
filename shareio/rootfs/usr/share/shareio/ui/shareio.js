@@ -71,29 +71,13 @@
 
   function fileInput() { return $('#content input[type="file"]'); }
 
-  // True while we pass files to the app's dropzone, so our own window
-  // drag listeners ignore those forwarded events.
-  var forwarding = false;
-
   function addFiles(files) {
     var input = fileInput();
     if (!input || !files || !files.length || typeof DataTransfer === 'undefined') return false;
     var dt = new DataTransfer();
     Array.prototype.forEach.call(files, function (f) { dt.items.add(f); });
-    // Hand the files to the app's own dropzone: it appends to the list,
-    // while setting the file input again can replace or be ignored.
-    var zone = $('[data-sio-zone]');
-    if (zone && typeof DragEvent === 'function') {
-      forwarding = true;
-      try {
-        ['dragenter', 'dragover', 'drop'].forEach(function (type) {
-          zone.dispatchEvent(new DragEvent(type, { dataTransfer: dt, bubbles: true, cancelable: true }));
-        });
-      } finally {
-        forwarding = false;
-      }
-      return true;
-    }
+    // The app adds whatever is in the file picker to its list on every
+    // change, so this appends. (Its dropzone ignores synthetic drops.)
     input.files = dt.files;
     input.dispatchEvent(new Event('change', { bubbles: true }));
     return true;
@@ -137,19 +121,18 @@
     overlay.classList.toggle('is-active', on);
   }
   window.addEventListener('dragenter', function (ev) {
-    if (forwarding || !hasFiles(ev) || !fileInput()) return;
+    if (!hasFiles(ev) || !fileInput()) return;
     dragDepth++;
     showOverlay(true);
   });
   window.addEventListener('dragleave', function () {
-    if (forwarding) return;
     if (dragDepth > 0 && --dragDepth === 0) showOverlay(false);
   });
   window.addEventListener('dragover', function (ev) {
-    if (!forwarding && hasFiles(ev) && fileInput()) ev.preventDefault();
+    if (hasFiles(ev) && fileInput()) ev.preventDefault();
   });
   window.addEventListener('drop', function (ev) {
-    if (forwarding || !hasFiles(ev) || !fileInput()) return;
+    if (!hasFiles(ev) || !fileInput()) return;
     dragDepth = 0;
     showOverlay(false);
     // The overlay covers the page, so drops land here, not on the app.
