@@ -12,7 +12,6 @@ services:
   - mysql:want
 auth_api: true
 ingress: true
-ingress_port: 8099
 ingress_stream: true
 panel_icon: mdi:share-variant
 panel_title: ShareIo
