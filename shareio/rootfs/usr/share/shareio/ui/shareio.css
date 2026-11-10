@@ -1,0 +1,434 @@
+/*
+ * ShareIo theme
+ *
+ * A modern skin over the bundled web app. It only restyles existing
+ * elements (Tailwind utility classes and hooks added by shareio.js), so
+ * the app keeps working if a selector stops matching after an update.
+ */
+
+:root {
+  --sio-brand-1: #6366f1;
+  --sio-brand-2: #a855f7;
+  --sio-accent: #06b6d4;
+  --sio-grad: linear-gradient(135deg, var(--sio-brand-1), var(--sio-brand-2));
+  --sio-bg: #f7f7fb;
+  --sio-surface: #ffffff;
+  --sio-surface-2: #f1f2f9;
+  --sio-border: #e4e4f0;
+  --sio-text: #1e1b4b;
+  --sio-muted: #6b6b8a;
+  --sio-ring: rgba(99, 102, 241, 0.35);
+  --sio-radius: 12px;
+  --sio-radius-lg: 18px;
+  --sio-shadow: 0 1px 2px rgba(30, 27, 75, 0.06), 0 8px 24px rgba(30, 27, 75, 0.06);
+  --sio-shadow-lg: 0 2px 6px rgba(30, 27, 75, 0.08), 0 18px 48px rgba(30, 27, 75, 0.12);
+  --sio-font: Inter, "Segoe UI Variable", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --sio-mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+
+.dark {
+  --sio-bg: #121220;
+  --sio-surface: #1b1b2e;
+  --sio-surface-2: #23233a;
+  --sio-border: #30304d;
+  --sio-text: #ecebff;
+  --sio-muted: #a3a3c2;
+  --sio-ring: rgba(168, 85, 247, 0.45);
+  --sio-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
+  --sio-shadow-lg: 0 2px 6px rgba(0, 0, 0, 0.35), 0 18px 48px rgba(0, 0, 0, 0.4);
+  color-scheme: dark;
+}
+
+/* ---------- Base ---------- */
+
+html, body {
+  font-family: var(--sio-font) !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+body, #main, body.dark, body.dark #main {
+  background: var(--sio-bg) !important;
+  color: var(--sio-text) !important;
+}
+
+::selection { background: rgba(99, 102, 241, 0.25); }
+
+* { scrollbar-width: thin; scrollbar-color: var(--sio-border) transparent; }
+
+a, button, label, input, textarea, select {
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease,
+              box-shadow .15s ease, transform .15s ease, filter .15s ease;
+}
+
+:focus-visible {
+  outline: 2px solid var(--sio-brand-1) !important;
+  outline-offset: 2px;
+}
+
+h1 {
+  font-weight: 750 !important;
+  letter-spacing: -0.02em !important;
+}
+
+/* ---------- Header ---------- */
+
+#main > div.fixed.top-0 {
+  background: color-mix(in srgb, var(--sio-surface) 78%, transparent) !important;
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
+  backdrop-filter: saturate(160%) blur(14px);
+  border-bottom: 1px solid var(--sio-border);
+  box-shadow: none !important;
+  color: var(--sio-text) !important;
+}
+
+#main > div.fixed.top-0 > a:first-child {
+  font-weight: 750 !important;
+  letter-spacing: -0.01em;
+  gap: 2px;
+}
+
+#main > div.fixed.top-0 > a:first-child img {
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+}
+
+#main > div.fixed.top-0 a[class*="hover:bg-indigo-200"]:hover,
+#main > div.fixed.top-0 a[class*="dark:hover:bg-stone-800"]:hover {
+  background: var(--sio-surface-2) !important;
+}
+
+/* Dropdown menus */
+#main > div.fixed.top-0 .absolute.right-0 {
+  background: var(--sio-surface) !important;
+  border: 1px solid var(--sio-border) !important;
+  border-radius: var(--sio-radius) !important;
+  box-shadow: var(--sio-shadow-lg) !important;
+  padding: 6px !important;
+  margin-top: 6px;
+}
+#main > div.fixed.top-0 .absolute.right-0 > a {
+  border-radius: 8px;
+}
+#main > div.fixed.top-0 .absolute.right-0 > a:hover,
+#main > div.fixed.top-0 .absolute.right-0 > a.bg-gray-200,
+#main > div.fixed.top-0 .absolute.right-0 > a[class~="dark:bg-stone-700"] {
+  background: var(--sio-surface-2) !important;
+}
+
+/* ---------- Buttons ---------- */
+
+/* Primary */
+#main a.bg-blue-500,
+#main button.bg-blue-500,
+#main label.bg-blue-500,
+body.dark #main a[class~="dark:bg-orange-800"],
+body.dark #main label[class~="dark:bg-orange-800"] {
+  background: var(--sio-grad) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+  border-radius: var(--sio-radius) !important;
+  font-weight: 600;
+  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.32) !important;
+}
+#main a.bg-blue-500:hover,
+#main label.bg-blue-500:hover,
+body.dark #main a[class~="dark:bg-orange-800"]:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px rgba(99, 102, 241, 0.4) !important;
+}
+#main a.bg-blue-500:active { transform: translateY(0); }
+#main a[class~="bg-blue-500"][class~="disabled"],
+#main a[class~="bg-blue-500"][class~="cursor-not-allowed"],
+#main a[class~="bg-blue-300"] {
+  filter: grayscale(.4) opacity(.6);
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Secondary */
+#main a.bg-gray-300,
+#main button.bg-gray-300,
+body.dark #main a[class~="dark:bg-stone-400"] {
+  background: var(--sio-surface-2) !important;
+  color: var(--sio-text) !important;
+  border: 1px solid var(--sio-border) !important;
+  border-radius: var(--sio-radius) !important;
+  font-weight: 600;
+  box-shadow: none !important;
+}
+#main a.bg-gray-300:hover,
+body.dark #main a[class~="dark:bg-stone-400"]:hover {
+  border-color: var(--sio-brand-1) !important;
+  color: var(--sio-brand-1) !important;
+}
+
+/* Outline and toggle buttons */
+#main a.rounded.border:not(.bg-blue-500):not(.bg-gray-300),
+#main label.border-blue-500 {
+  border-radius: var(--sio-radius) !important;
+  border-color: var(--sio-border) !important;
+  box-shadow: none !important;
+}
+#main label.border-blue-500 {
+  border: 1.5px solid var(--sio-brand-1) !important;
+  color: var(--sio-brand-1) !important;
+  font-weight: 600;
+  background: var(--sio-surface) !important;
+}
+#main label.border-blue-500:hover {
+  background: var(--sio-surface-2) !important;
+}
+#main a.bg-gray-600 {
+  background: var(--sio-text) !important;
+  color: var(--sio-surface) !important;
+}
+
+/* ---------- Forms ---------- */
+
+#main input[type="text"],
+#main input[type="password"],
+#main input[type="email"],
+#main input[type="number"],
+#main textarea,
+#main a.inline-flex.border.rounded[class*="py-2"][class*="w-full"] {
+  background: var(--sio-surface) !important;
+  border: 1px solid var(--sio-border) !important;
+  border-radius: var(--sio-radius) !important;
+  color: var(--sio-text) !important;
+}
+#main input[type="text"]:focus,
+#main input[type="password"]:focus,
+#main textarea:focus {
+  border-color: var(--sio-brand-1) !important;
+  box-shadow: 0 0 0 4px var(--sio-ring) !important;
+  outline: none !important;
+}
+#main label.text-sm.font-semibold {
+  color: var(--sio-muted);
+  font-size: .78rem !important;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+#main input[type="checkbox"] {
+  accent-color: var(--sio-brand-1);
+  border-radius: 5px;
+}
+
+/* ---------- Surfaces ---------- */
+
+#content [class~="md:bg-gray-100"],
+#content div.shadow-md.rounded,
+#content div.shadow-md[class*="bg-white"],
+#content div.border.rounded.shadow-md {
+  background: var(--sio-surface) !important;
+  border: 1px solid var(--sio-border) !important;
+  border-radius: var(--sio-radius-lg) !important;
+  box-shadow: var(--sio-shadow) !important;
+}
+
+#content table {
+  border-collapse: separate !important;
+  border-spacing: 0;
+  background: var(--sio-surface);
+  border: 1px solid var(--sio-border);
+  border-radius: var(--sio-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--sio-shadow);
+}
+#content table thead th {
+  background: var(--sio-surface-2);
+  color: var(--sio-muted);
+  font-size: .74rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-weight: 650 !important;
+  padding-top: .7rem; padding-bottom: .7rem;
+}
+#content table tbody tr { cursor: pointer; }
+#content table tbody tr:hover td { background: var(--sio-surface-2); }
+#content table td, #content table th { border-color: var(--sio-border) !important; }
+
+#content pre, #content code {
+  font-family: var(--sio-mono);
+}
+#content pre {
+  background: var(--sio-surface-2);
+  border: 1px solid var(--sio-border);
+  border-radius: var(--sio-radius);
+  padding: .6rem .8rem;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* Links */
+#content a.text-blue-400 {
+  color: var(--sio-brand-1) !important;
+  font-weight: 550;
+}
+.dark #content a.text-blue-400 { color: #c4b5fd !important; }
+
+/* Info / success / error messages */
+#content div[class*="bg-blue-100"],
+#content div[class*="bg-green-100"],
+#content div[class*="bg-red-100"],
+#content div[class*="bg-yellow-100"] {
+  border-radius: var(--sio-radius) !important;
+}
+
+/* ---------- Home ---------- */
+
+.sio-hero {
+  width: min(320px, 80vw);
+  height: auto;
+  display: block;
+  margin: 0 auto -6px;
+  animation: sio-float 6s ease-in-out infinite;
+}
+@keyframes sio-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.sio-hero-title {
+  font-size: clamp(1.7rem, 4vw, 2.3rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: var(--sio-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+}
+.sio-hero-sub {
+  display: block;
+  margin-top: .35rem;
+  font-size: 1rem;
+  font-weight: 450;
+  color: var(--sio-muted);
+  letter-spacing: 0;
+}
+.sio-kbd-hints {
+  margin-top: 1.25rem;
+  font-size: .8rem;
+  color: var(--sio-muted);
+  text-align: center;
+}
+kbd.sio-kbd {
+  font-family: var(--sio-mono);
+  font-size: .72rem;
+  padding: .1rem .4rem;
+  border-radius: 6px;
+  border: 1px solid var(--sio-border);
+  border-bottom-width: 2px;
+  background: var(--sio-surface);
+  color: var(--sio-text);
+}
+
+/* ---------- Upload ---------- */
+
+.sio-dropzone {
+  border: 2px dashed color-mix(in srgb, var(--sio-brand-1) 45%, var(--sio-border)) !important;
+  border-radius: var(--sio-radius-lg) !important;
+  background:
+    radial-gradient(120% 120% at 50% 0%, color-mix(in srgb, var(--sio-brand-1) 9%, transparent), transparent 60%),
+    var(--sio-surface) !important;
+}
+.sio-dropzone:hover { border-color: var(--sio-brand-1) !important; }
+
+.sio-drop-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--sio-bg) 70%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+.sio-drop-overlay.is-active { display: flex; }
+.sio-drop-overlay > div {
+  pointer-events: none;
+  padding: 2.5rem 3rem;
+  border-radius: 24px;
+  border: 2.5px dashed var(--sio-brand-1);
+  background: var(--sio-surface);
+  box-shadow: var(--sio-shadow-lg);
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--sio-text);
+}
+.sio-drop-overlay img { width: 64px; height: 64px; margin: 0 auto .75rem; display: block; }
+.sio-drop-overlay small { display: block; margin-top: .35rem; font-weight: 450; font-size: .9rem; color: var(--sio-muted); }
+
+/* ---------- Share link extras ---------- */
+
+.sio-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  justify-content: center;
+}
+.sio-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .5rem 1rem;
+  border-radius: var(--sio-radius);
+  border: 1px solid var(--sio-border);
+  background: var(--sio-surface-2);
+  color: var(--sio-text);
+  font-weight: 600;
+  font-size: .95rem;
+  cursor: pointer;
+}
+.sio-btn:hover { border-color: var(--sio-brand-1); color: var(--sio-brand-1); }
+.sio-btn svg { width: 18px; height: 18px; }
+
+/* ---------- Toasts ---------- */
+
+.sio-toasts {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  pointer-events: none;
+}
+.sio-toast {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  padding: .65rem 1rem;
+  border-radius: 999px;
+  background: var(--sio-text);
+  color: var(--sio-surface);
+  font-weight: 600;
+  font-size: .92rem;
+  box-shadow: var(--sio-shadow-lg);
+  animation: sio-toast-in .22s ease-out;
+}
+.sio-toast.is-leaving { animation: sio-toast-out .2s ease-in forwards; }
+.sio-toast svg { width: 18px; height: 18px; color: #a7f3d0; }
+@keyframes sio-toast-in { from { opacity: 0; transform: translateY(10px) scale(.98); } }
+@keyframes sio-toast-out { to { opacity: 0; transform: translateY(6px); } }
+
+/* ---------- Footer ---------- */
+
+#main > div.markdown-preview {
+  color: var(--sio-muted);
+  padding: 1rem 0 1.25rem !important;
+  font-size: .75rem;
+  letter-spacing: .02em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

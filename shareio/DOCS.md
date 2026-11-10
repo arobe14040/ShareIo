@@ -3,6 +3,22 @@
 ShareIo is simple, self-hosted file sharing for Home Assistant. Upload files,
 get a link, send it to anyone.
 
+## Features
+
+- **Sidebar panel** in Home Assistant with automatic login
+- **Modern design** with the ShareIo look, light and dark themes. It follows
+  your system theme until you pick one in the menu.
+- **Paste to upload:** press <kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>V</kbd> on a
+  share or alias page to add files from the clipboard (for example
+  screenshots).
+- **Drop anywhere:** drag files onto the window, not just the drop box.
+- **Share links:** a QR code, a native **Share…** button on phones and tablets,
+  and **Save QR** to download the QR code as an image.
+- **Keyboard shortcuts:** <kbd>N</kbd> new share, <kbd>A</kbd> new alias,
+  <kbd>/</kbd> search.
+- **Installable app:** add ShareIo to your home screen or desktop from the
+  browser.
+
 ## Install
 
 1. In Home Assistant, go to **Settings → Add-ons → Add-on Store**, open the
