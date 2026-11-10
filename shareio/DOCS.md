@@ -1,7 +1,7 @@
 # Home Assistant Add-on: ShareIo
 
-ShareIo is simple, self-hosted file sharing for Home Assistant, powered by
-[Sharry][sharry]. Upload files, get a link, send it to anyone.
+ShareIo is simple, self-hosted file sharing for Home Assistant. Upload files,
+get a link, send it to anyone.
 
 ## Install
 
@@ -13,20 +13,20 @@ ShareIo is simple, self-hosted file sharing for Home Assistant, powered by
 
 ## Access & Login
 
-Sharry is setup to authenticate with Home Assistant by default. This means any
+ShareIo is setup to authenticate with Home Assistant by default. This means any
 HA user can open the UI and login with their HA credentials. Each HA user will
-have their own account in Sharry and their own shares.
+have their own account in ShareIo and their own shares.
 
 The addon has disabled all other login methods and new user registration by default.
-If you want to allow users to have accounts just with Sharry you can enable user
+If you want to allow users to have accounts just with ShareIo you can enable user
 registration and other login methods using the `conf_overrides` option shown below.
 You will need to configure one of the other login methods under `sharry.restserver.backend.auth`
 and set `sharry.restserver.backend.signup.mode` to either `open` or `invite`. See
-[Sharry coniguration][sharry-docs-configure] for more information.
+[server configuration reference][sharry-docs-configure] for more information.
 
 ## Database Setup
 
-[Sharry][sharry] requires a Postgres or MariaDB database to store its data. By
+ShareIo requires a Postgres or MariaDB database to store its data. By
 default it will store its data in the [MariaDB addon][addon-mariadb]. That add-on
 must be installed and running prior to start-up. You don't need any additional
 configuration for this, as long as the MariaDB add-on is running this one can
@@ -35,15 +35,15 @@ use it.
 [![Open your Home Assistant instance and show the dashboard of a Supervisor add-on.][add-addon-shield]][add-addon-mariadb]
 
 If you prefer you can use a remote database by filling in all the `remote_db_*`
-options below. You must create the database and operator for Sharry in advance
-and Sharry will need full read/write access on the specified database so it can
+options below. You must create the database and operator for ShareIo in advance
+and ShareIo will need full read/write access on the specified database so it can
 set up the schema and manage the data.
 
 Please note that there is no easy upgrade path between these two options.
 
 ## ⚠ Backing up ShareIo
 
-Since Sharry does not store its own data, snapshots of this add-on will only
+Since ShareIo does not store its own data, snapshots of this add-on will only
 include its configuration. You will need to separately back up the data in order
 to restore. If you are using the MariaDB add-on then make sure to include that
 add-on in your snapshot as well. If you are using a different database then you
@@ -70,35 +70,35 @@ conf_overrides:
 
 ### Option: `base_url`
 
-The full public address users will reach Sharry at, for example
-`https://share.example.com`. Use this when Sharry sits behind a reverse proxy or a
+The full public address users will reach ShareIo at, for example
+`https://share.example.com`. Use this when ShareIo sits behind a reverse proxy or a
 Cloudflare tunnel. When set, it is used exactly as given and `domain`, `use_ssl`
 and the published port are ignored, so the port is never added to share links.
 Do not include a trailing slash or a path.
 
 ### Option: `domain`
 
-Only used when `base_url` is not set. The domain users will access Sharry at. Sharry is given a base URL that it uses
+Only used when `base_url` is not set. The domain users will access ShareIo at. ShareIo is given a base URL that it uses
 for generating URLs and configuring cookies. That will be created from this option,
 the `use_ssl` option, and the port you list for `9090`. If the port isn't listed
-then the addon assumes users do not include a port in the URL when accessing Sharry.
+then the addon assumes users do not include a port in the URL when accessing ShareIo.
 
 ### Option: `use_ssl`
 
-If users will use SSL to access Sharry. Defaults to `false`.
+If users will use SSL to access ShareIo. Defaults to `false`.
 
-**Note**: _Enabling SSL access is out of scope for Sharry. This option is for users
+**Note**: _Enabling SSL access is out of scope for ShareIo. This option is for users
 who use a reverse proxy and enable SSL there._
 
 ### Option: `access.add_port`
 
-The port users will have to provide when accessing Sharry. If omitted, assumes
-users will not provide a port in the URL when accessing Sharry.
+The port users will have to provide when accessing ShareIo. If omitted, assumes
+users will not provide a port in the URL when accessing ShareIo.
 
 ### Option: `default_language`
 
 An [ISO 3166-1][iso-3166-1] country code. Defaults to `gb` if omitted or if the
-code provided is invalid or its language is unavailable to Sharry.
+code provided is invalid or its language is unavailable to ShareIo.
 
 ### Option: `share_max_size_gb`
 
@@ -150,10 +150,10 @@ option will be cleared automatically for the addon._
 
 ### Option: `conf_overrides`
 
-Sharry's configuration is specified in [HOCON][hocon]. This means the values in
+The server's configuration is specified in [HOCON][hocon]. This means the values in
 the config value can be overridden using java properties as described [here][hocon-docs-props].
 This option lets you provide an array of config overrides to customize advanced
-parts of Sharry's config which haven't been exposed as options above. You can see
+parts of the server config which haven't been exposed as options above. You can see
 the full set of available options here:
 
 <https://eikek.github.io/sharry/doc/configure#default-config>
@@ -225,7 +225,7 @@ SOFTWARE.
 [add-addon-shield]: https://my.home-assistant.io/badges/supervisor_addon.svg
 [add-addon-mariadb]: https://my.home-assistant.io/redirect/supervisor_addon/?addon=core_mariadb
 [addon-mariadb]: https://github.com/home-assistant/addons/tree/master/mariadb
-[default-config]: https://github.com/arobe14040/ShareIo/blob/main/shareio/rootfs/etc/sharry/sharry.conf
+[default-config]: https://github.com/arobe14040/ShareIo/blob/main/shareio/rootfs/etc/shareio/shareio.conf
 [hocon]: https://github.com/lightbend/config/blob/master/HOCON.md#hocon-human-optimized-config-object-notation
 [hocon-docs-arrays]: https://github.com/lightbend/config/blob/master/README.md#set-array-values-outside-configuration-files
 [hocon-docs-props]: https://github.com/lightbend/config/blob/master/HOCON.md#java-properties-mapping

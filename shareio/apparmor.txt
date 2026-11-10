@@ -62,11 +62,11 @@ profile shareio flags=(attach_disconnected,mediate_deleted) {
   /data/**                                            rw,
 
   # Files needed for setup
-  @{do_etc}/sharry/{,**}                              rw,
-  @{do_opt}/sharry/{,**}                              r,
+  @{do_etc}/shareio/{,**}                              rw,
+  @{do_opt}/shareio/{,**}                              r,
 
   # Programs
-  /opt/sharry/bin/sharry-restserver                   rix,
+  /opt/shareio/bin/sharry-restserver                   rix,
   /usr/lib/jvm/java-[1-9][0-9]-openjdk/bin/java       rmcx -> shareio-java,
 
   profile shareio-java flags=(attach_disconnected,mediate_deleted) {
@@ -81,11 +81,11 @@ profile shareio flags=(attach_disconnected,mediate_deleted) {
 
     # Addon data
     /data/**                                          r,
-    /data/sharry/**                                   rwk,
+    /data/shareio/**                                   rwk,
 
     # Config
-    @{do_etc}/sharry/*                                r,
-    @{do_opt}/sharry/**                               r,
+    @{do_etc}/shareio/*                                r,
+    @{do_opt}/shareio/**                               r,
 
     # Self
     /usr/lib/jvm/java-[1-9][0-9]-openjdk/bin/java     rmix,
@@ -103,7 +103,7 @@ profile shareio flags=(attach_disconnected,mediate_deleted) {
     owner /tmp/**                                             rwm,
     @{PROC}/[1-9]*/coredump_filter                            rw,
     @{do_etc}/ssl/certs/java/**                               r,
-    @{do_run}/s6/{legacy-services,services}/sharry/           r,
+    @{do_run}/s6/{legacy-services,services}/shareio/           r,
     @{PROC}/[1-9]*/net/{if_inet6,ipv6_route}                  r,
     @{PROC}/[1-9]*/{cgroup,cmdline,fd/,mountinfo,stat}        r,
     @{sys}/fs/cgroup/cpu,cpuacct/cpu.{shares,cfs_period_us,cfs_quota_us}  r,

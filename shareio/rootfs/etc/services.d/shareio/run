@@ -2,10 +2,11 @@
 # shellcheck shell=bash
 # ==============================================================================
 # Home Assistant Add-on: ShareIo
-# Runs Sharry, the file sharing server behind ShareIo
+# Runs the ShareIo file sharing server
 # ==============================================================================
 
-readonly SHARRY=sharry.restserver
+# Config keys of the bundled server (fixed upstream names)
+readonly PREFIX=sharry.restserver
 declare host
 declare port
 declare username
@@ -15,7 +16,7 @@ declare value
 declare base_url
 declare log_level
 declare db_type=mariadb
-declare database=sharry
+declare database=shareio
 declare -a conf_props=()
 
 # Set DB URL
@@ -34,13 +35,13 @@ else
     password=$(bashio::services 'mysql' 'password')
 fi
 conf_props+=( \
-    "-D${SHARRY}.backend.jdbc.url=jdbc:${db_type}://${host}:${port}/${database}" \
-    "-D${SHARRY}.backend.jdbc.user=${username}" \
-    "-D${SHARRY}.backend.jdbc.password=${password}" \
+    "-D${PREFIX}.backend.jdbc.url=jdbc:${db_type}://${host}:${port}/${database}" \
+    "-D${PREFIX}.backend.jdbc.user=${username}" \
+    "-D${PREFIX}.backend.jdbc.password=${password}" \
 )
 
 # Set base URL
-bashio::log.debug "Setting base URL for Sharry..."
+bashio::log.debug "Setting base URL for ShareIo..."
 if ! bashio::config.is_empty 'base_url'; then
     # Full public URL given (e.g. behind a reverse proxy or Cloudflare tunnel)
     base_url="$(bashio::config 'base_url')"
@@ -56,26 +57,26 @@ else
     fi
 fi
 bashio::log.info "ShareIo will be available at ${base_url}"
-conf_props+=("-D${SHARRY}.base-url=${base_url}")
+conf_props+=("-D${PREFIX}.base-url=${base_url}")
 
 # Add other config options to properties array
 bashio::log.debug "Adding in secret, language, theme and share config options..."
-conf_props+=("-D${SHARRY}.backend.auth.server-secret=$(bashio::config 'server_secret')")
+conf_props+=("-D${PREFIX}.backend.auth.server-secret=$(bashio::config 'server_secret')")
 
 if bashio::config.exists 'theme'; then
-    conf_props+=("-D${SHARRY}.webapp.initial-theme=$(bashio::config 'theme')")
+    conf_props+=("-D${PREFIX}.webapp.initial-theme=$(bashio::config 'theme')")
 fi
 
 if ! bashio::config.is_empty 'default_language'; then
-    conf_props+=("-D${SHARRY}.webapp.default-language=$(bashio::config 'default_language')")
+    conf_props+=("-D${PREFIX}.webapp.default-language=$(bashio::config 'default_language')")
 fi
 
 if bashio::config.exists 'share_max_size_gb'; then
-    conf_props+=("-D${SHARRY}.backend.share.max-size=$(bashio::config 'share_max_size_gb')g")
+    conf_props+=("-D${PREFIX}.backend.share.max-size=$(bashio::config 'share_max_size_gb')g")
 fi
 
 if bashio::config.exists 'share_max_valid_days'; then
-    conf_props+=("-D${SHARRY}.backend.share.max-validity=$(bashio::config 'share_max_valid_days')d")
+    conf_props+=("-D${PREFIX}.backend.share.max-validity=$(bashio::config 'share_max_valid_days')d")
 fi
 
 # --- SET LOG LEVEL ---
@@ -90,7 +91,7 @@ case "$(bashio::config 'log_level')" in \
     *)          log_level='Info' ;; \
 esac;
 bashio::log.info "ShareIo log level set to ${log_level}"
-conf_props+=("-D${SHARRY}.logging.minimum-level=${log_level}")
+conf_props+=("-D${PREFIX}.logging.minimum-level=${log_level}")
 
 # Load user's custom configuration overrides last so they take precedence
 # (protected properties are rejected in cont-init.d/30-config.sh)
@@ -108,12 +109,12 @@ done
 
 # Print all config options for debugging
 bashio::log.debug
-bashio::log.debug "Printing all startup flags being provided to Sharry..."
+bashio::log.debug "Printing all startup flags being provided to the ShareIo server..."
 for prop in "${conf_props[@]}"; do
     bashio::log.debug "${prop}"
 done
 bashio::log.debug
 
-bashio::log.info "Handing over control to Sharry..."
+bashio::log.info "Handing over control to the ShareIo server..."
 exec s6-setuidgid abc \
-    /opt/sharry/bin/sharry-restserver "${conf_props[@]}" -- /etc/sharry/sharry.conf
+    /opt/shareio/bin/sharry-restserver "${conf_props[@]}" -- /etc/shareio/shareio.conf

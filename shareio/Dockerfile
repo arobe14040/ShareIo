@@ -4,10 +4,11 @@ ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.10
 # hadolint ignore=DL3006
 FROM ${BUILD_FROM}
 
+# File sharing server (upstream release, MIT/GPL credits in README)
 # https://github.com/eikek/sharry/releases
-ARG SHARRY_VERSION=1.17.0
+ARG SERVER_VERSION=1.17.0
 
-# Add Sharry and java
+# Add the ShareIo server and java
 # Package versions follow the Alpine release of the base image
 # hadolint ignore=DL3018
 RUN set -eux; \
@@ -17,11 +18,11 @@ RUN set -eux; \
         unzip \
         ; \
     mkdir -p /opt; \
-    curl -s -J -L -o /tmp/sharry.zip \
-        "https://github.com/eikek/sharry/releases/download/v${SHARRY_VERSION}/sharry-restserver-${SHARRY_VERSION}.zip"; \
-    unzip /tmp/sharry.zip -d /opt; \
-    mv /opt/sharry-restserver-${SHARRY_VERSION} /opt/sharry; \
-    rm /tmp/sharry.zip; \
+    curl -s -J -L -o /tmp/server.zip \
+        "https://github.com/eikek/sharry/releases/download/v${SERVER_VERSION}/sharry-restserver-${SERVER_VERSION}.zip"; \
+    unzip /tmp/server.zip -d /opt; \
+    mv "/opt/sharry-restserver-${SERVER_VERSION}" /opt/shareio; \
+    rm /tmp/server.zip; \
     apk del .build-deps; \
     \
     apk add --no-cache \
@@ -31,16 +32,16 @@ RUN set -eux; \
         ; \
     java -version; \
     \
-    echo "Add user for Sharry"; \
-    mkdir -p /data/sharry; \
+    echo "Add user for ShareIo"; \
+    mkdir -p /data/shareio; \
     addgroup -S abc; \
-    adduser -u 12345 -h /data/sharry -D -S abc -G abc; \
-    chown -R abc:abc /opt/sharry;
-    
-COPY --chown=abc:abc rootfs /
-WORKDIR /data/sharry
+    adduser -u 12345 -h /data/shareio -D -S abc -G abc; \
+    chown -R abc:abc /opt/shareio;
 
-# Sharry (Java + database migrations) can take a while to start
+COPY --chown=abc:abc rootfs /
+WORKDIR /data/shareio
+
+# The server (Java + database migrations) can take a while to start
 HEALTHCHECK --interval=30s --timeout=10s --start-period=3m --retries=3 \
     CMD ["curl", "--fail", "--silent", "--output", "/dev/null", "http://127.0.0.1:9090/api/v2/open/info/version"]
 

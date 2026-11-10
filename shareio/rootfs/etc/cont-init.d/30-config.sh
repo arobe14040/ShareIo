@@ -1,10 +1,10 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
 # ==============================================================================
-# Home Assistant Add-on: ShareIo (runs Sharry)
+# Home Assistant Add-on: ShareIo
 # This validates config, creates the database and sets up app files/folders
 # ==============================================================================
-readonly DATABASE=sharry
+readonly DATABASE=shareio
 declare host
 declare port
 declare username
