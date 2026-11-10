@@ -28,8 +28,10 @@ RUN set -eux; \
     apk add --no-cache \
         mariadb-client \
         netcat-openbsd \
+        nginx \
         openjdk17-jre-headless \
         ; \
+    rm -f /etc/nginx/http.d/default.conf; \
     java -version; \
     \
     echo "Add user for ShareIo"; \
@@ -43,7 +45,7 @@ WORKDIR /data/shareio
 
 # The server (Java + database migrations) can take a while to start
 HEALTHCHECK --interval=30s --timeout=10s --start-period=3m --retries=3 \
-    CMD ["curl", "--fail", "--silent", "--output", "/dev/null", "http://127.0.0.1:9090/api/v2/open/info/version"]
+    CMD ["curl", "--fail", "--silent", "--output", "/dev/null", "http://127.0.0.1:9091/api/v2/open/info/version"]
 
 # Build arguments
 ARG BUILD_ARCH

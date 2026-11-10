@@ -44,6 +44,18 @@ for var in $(bashio::config 'conf_overrides|keys'); do
         bashio::log.fatal "'sharry.restserver.backend.files.*'"
         bashio::log.fatal
         bashio::exit.nok
+
+    elif [[ ${property} =~ ^sharry[.]restserver[.](bind|backend[.]auth[.]proxy) ]]; then
+        bashio::log.fatal
+        bashio::log.fatal "Your config attempts to override the server's listen address"
+        bashio::log.fatal "or the Home Assistant login used by the sidebar panel."
+        bashio::log.fatal "This is not allowed as it would let others log in as any user."
+        bashio::log.fatal
+        bashio::log.fatal "Remove any conf_overrides you have added with a property"
+        bashio::log.fatal "matching these patterns and try again:"
+        bashio::log.fatal "'sharry.restserver.bind.*', 'sharry.restserver.backend.auth.proxy.*'"
+        bashio::log.fatal
+        bashio::exit.nok
     fi
 done
 

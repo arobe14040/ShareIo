@@ -13,9 +13,32 @@ get a link, send it to anyone.
 
 ## Access & Login
 
-ShareIo is setup to authenticate with Home Assistant by default. This means any
-HA user can open the UI and login with their HA credentials. Each HA user will
-have their own account in ShareIo and their own shares.
+### Sidebar panel (ingress)
+
+ShareIo adds a **ShareIo** entry to the Home Assistant sidebar, like Frigate.
+It works wherever you can reach Home Assistant, including remotely, with no extra
+reverse proxy or Cloudflare configuration. You are logged in automatically as
+the Home Assistant user who opened it.
+
+Links you create in the panel point to your Home Assistant address, so **only
+people who can log in to your Home Assistant can open them**. To send files to
+anyone else, use direct access below.
+
+The panel relies on small adjustments to the web app so it can run under Home
+Assistant's ingress path. If something in the panel misbehaves after an
+update, direct access keeps working.
+
+### Direct access and public share links
+
+The web UI is also served on port `9090` (`http://<home-assistant-ip>:9090`).
+Here users log in with their Home Assistant username and password. To share
+files with people outside your household, expose this port publicly (for
+example through a reverse proxy or a Cloudflare tunnel) and set `base_url` to
+that public address. You can remove the port mapping in the add-on's Network
+settings if you only use the panel.
+
+Each HA user has their own account in ShareIo and their own shares, whichever
+way they log in.
 
 The addon has disabled all other login methods and new user registration by default.
 If you want to allow users to have accounts just with ShareIo you can enable user

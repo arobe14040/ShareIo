@@ -1,7 +1,7 @@
 ---
 name: ShareIo
 url: https://github.com/arobe14040/ShareIo
-version: 3.0.0
+version: 3.1.0
 slug: shareio
 arch:
   - aarch64
@@ -11,11 +11,15 @@ init: false
 services:
   - mysql:want
 auth_api: true
-webui: http://[HOST]:[PORT:9090]
+ingress: true
+ingress_port: 8099
+ingress_stream: true
+panel_icon: mdi:share-variant
+panel_title: ShareIo
 ports:
   9090/tcp: 9090
 ports_description:
-  9090/tcp: HTTP listen port
+  9090/tcp: Direct access (optional, for public share links)
 options:
   domain: homeassistant.local
   use_ssl: false

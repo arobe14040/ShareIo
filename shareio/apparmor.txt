@@ -65,6 +65,15 @@ profile shareio flags=(attach_disconnected,mediate_deleted) {
   @{do_etc}/shareio/{,**}                              rw,
   @{do_opt}/shareio/{,**}                              r,
 
+  # NGINX (ingress and direct access proxy)
+  /usr/sbin/nginx                                     rix,
+  @{do_etc}/nginx/{,**}                               r,
+  @{do_usr}/lib/nginx/{,**}                           rm,
+  @{do_usr}/share/nginx/{,**}                         r,
+  @{do_var}/lib/nginx/{,**}                           rwk,
+  @{do_var}/log/nginx/{,**}                           rw,
+  @{sys}/devices/system/cpu/{,**}                     r,
+
   # Programs
   /opt/shareio/bin/sharry-restserver                   rix,
   /usr/lib/jvm/java-[1-9][0-9]-openjdk/bin/java       rmcx -> shareio-java,

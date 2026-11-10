@@ -1,0 +1,12 @@
+#!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
+# ==============================================================================
+# Home Assistant Add-on: ShareIo
+# Runs NGINX, which serves ShareIo to Home Assistant ingress and the direct port
+# ==============================================================================
+
+# Wait for the ShareIo server before accepting connections
+bashio::net.wait_for 9091 127.0.0.1 300
+
+bashio::log.info "Starting NGINX..."
+exec nginx -g "daemon off;"
