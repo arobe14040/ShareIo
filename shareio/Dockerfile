@@ -1,4 +1,4 @@
-ARG BUILD_FROM=ghcr.io/hassio-addons/base
+ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.10
 
 # https://github.com/hassio-addons/app-base/releases
 # hadolint ignore=DL3006
