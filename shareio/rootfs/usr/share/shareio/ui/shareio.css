@@ -264,6 +264,39 @@ body.dark #main a[class~="dark:bg-stone-400"]:hover {
   word-break: break-all;
 }
 
+/* Sticky toolbars above lists and share pages */
+#content .sticky[class~="bg-white"] {
+  background: color-mix(in srgb, var(--sio-bg) 85%, transparent) !important;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* Outline action buttons ("Open", etc.), including the app's orange dark variants */
+#content a[class~="border-blue-500"]:not(.bg-blue-500),
+body.dark #content a[class*="dark:border-orange"]:not([class~="dark:bg-orange-800"]),
+body.dark #content label[class*="dark:border-orange"] {
+  border: 1.5px solid var(--sio-brand-1) !important;
+  color: var(--sio-brand-1) !important;
+  background: transparent !important;
+  border-radius: 10px !important;
+  font-weight: 600;
+  box-shadow: none !important;
+}
+body.dark #content a[class*="dark:border-orange"]:not([class~="dark:bg-orange-800"]),
+body.dark #content label[class*="dark:border-orange"] {
+  border-color: #a78bfa !important;
+  color: #c4b5fd !important;
+}
+
+/* QR code: always black on white so phones can scan it */
+#content div[class~="bg-gray-50"]:has(> svg) {
+  background: #ffffff !important;
+  border: 1px solid var(--sio-border);
+  border-radius: var(--sio-radius-lg);
+  padding: 14px;
+  box-shadow: var(--sio-shadow);
+}
+
 /* Links */
 #content a.text-blue-400 {
   color: var(--sio-brand-1) !important;

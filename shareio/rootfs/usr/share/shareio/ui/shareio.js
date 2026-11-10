@@ -106,11 +106,29 @@
 
   function fileInput() { return $('#content input[type="file"]'); }
 
+  // True while we pass files to the app's dropzone, so our own window
+  // drag listeners ignore those forwarded events.
+  var forwarding = false;
+
   function addFiles(files) {
     var input = fileInput();
     if (!input || !files || !files.length || typeof DataTransfer === 'undefined') return false;
     var dt = new DataTransfer();
     Array.prototype.forEach.call(files, function (f) { dt.items.add(f); });
+    // Hand the files to the app's own dropzone: it appends to the list,
+    // while setting the file input again can replace or be ignored.
+    var zone = $('.sio-dropzone');
+    if (zone && typeof DragEvent === 'function') {
+      forwarding = true;
+      try {
+        ['dragenter', 'dragover', 'drop'].forEach(function (type) {
+          zone.dispatchEvent(new DragEvent(type, { dataTransfer: dt, bubbles: true, cancelable: true }));
+        });
+      } finally {
+        forwarding = false;
+      }
+      return true;
+    }
     input.files = dt.files;
     input.dispatchEvent(new Event('change', { bubbles: true }));
     return true;
@@ -156,18 +174,19 @@
     overlay.classList.toggle('is-active', on);
   }
   window.addEventListener('dragenter', function (ev) {
-    if (!hasFiles(ev) || !fileInput()) return;
+    if (forwarding || !hasFiles(ev) || !fileInput()) return;
     dragDepth++;
     showOverlay(true);
   });
   window.addEventListener('dragleave', function () {
+    if (forwarding) return;
     if (dragDepth > 0 && --dragDepth === 0) showOverlay(false);
   });
   window.addEventListener('dragover', function (ev) {
-    if (hasFiles(ev) && fileInput()) ev.preventDefault();
+    if (!forwarding && hasFiles(ev) && fileInput()) ev.preventDefault();
   });
   window.addEventListener('drop', function (ev) {
-    if (!hasFiles(ev) || !fileInput()) return;
+    if (forwarding || !hasFiles(ev) || !fileInput()) return;
     dragDepth = 0;
     showOverlay(false);
     // The overlay covers the page, so drops land here, not on the app.
@@ -186,6 +205,17 @@
     var el = (target && $(target)) || btn.closest('div[class*="md:flex-row"]');
     var code = el && (el.matches && el.matches('code, pre') ? el : el.querySelector('code, pre'));
     return code ? code.textContent.trim() : '';
+  }
+
+  // The QR code is the largest SVG in the panel that is not one of our icons.
+  function qrSvg(panel) {
+    var best = null, bestSize = 0;
+    $all('svg', panel).forEach(function (s) {
+      if (s.closest('.sio-btn')) return;
+      var r = s.getBoundingClientRect();
+      if (r.width * r.height > bestSize) { best = s; bestSize = r.width * r.height; }
+    });
+    return bestSize > 4000 ? best : null;
   }
 
   function saveQr(svg, name) {
@@ -236,15 +266,15 @@
       }
 
       var panel = btn.closest('div[class*="md:flex-row"]');
-      var svg = panel && panel.querySelector('svg');
-      if (svg) {
+      if (panel && qrSvg(panel)) {
         var q = document.createElement('button');
         q.type = 'button';
         q.className = 'sio-btn';
         q.innerHTML = ICON.qr + '<span>Save QR</span>';
         q.addEventListener('click', function () {
           var id = (shareUrl(btn).split('/').pop() || 'share').split('?')[0];
-          saveQr(panel.querySelector('svg'), 'shareio-' + id + '.png');
+          var qr = qrSvg(panel);
+          if (qr) saveQr(qr, 'shareio-' + id + '.png');
         });
         bar.appendChild(q);
       }
