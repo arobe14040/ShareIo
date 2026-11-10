@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
 # ==============================================================================
-# Home Assistant Add-on: Sharry
+# Home Assistant Add-on: ShareIo (runs Sharry)
 # This validates config, creates the database and sets up app files/folders
 # ==============================================================================
 readonly DATABASE=sharry
@@ -12,6 +12,14 @@ declare password
 declare property
 
 # --- ADDITIONAL VALIDATION ---
+if bashio::config.is_empty 'base_url' && bashio::config.is_empty 'domain'; then
+    bashio::log.fatal
+    bashio::log.fatal "Either 'base_url' or 'domain' must be set so ShareIo knows"
+    bashio::log.fatal "the address users will reach it at."
+    bashio::log.fatal
+    bashio::exit.nok
+fi
+
 for var in $(bashio::config 'conf_overrides|keys'); do
     property=$(bashio::config "conf_overrides[${var}].property")
     if [[ ${property} =~ ^sharry[.]restserver[.]backend[.]auth[.]command ]]; then
@@ -89,9 +97,9 @@ else
     username=$(bashio::services 'mysql' 'username')
     password=$(bashio::services 'mysql' 'password')
 
-    bashio::log.notice "Sharry is using the Maria DB addon's database"
+    bashio::log.notice "ShareIo is using the Maria DB addon's database"
     bashio::log.notice "Please ensure that addon is included in your backups"
-    bashio::log.notice "Uninstalling the Maria DB addon will also remove Sharry's data"
+    bashio::log.notice "Uninstalling the Maria DB addon will also remove ShareIo's data"
 
     if bashio::config.true 'reset_database'; then
         bashio::log.warning 'Resetting database...'

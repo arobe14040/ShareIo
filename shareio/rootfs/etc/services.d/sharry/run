@@ -1,8 +1,8 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
 # ==============================================================================
-# Home Assistant Add-on: Sharry
-# Runs Sharry
+# Home Assistant Add-on: ShareIo
+# Runs Sharry, the file sharing server behind ShareIo
 # ==============================================================================
 
 readonly SHARRY=sharry.restserver
@@ -17,19 +17,6 @@ declare log_level
 declare db_type=mariadb
 declare database=sharry
 declare -a conf_props=()
-
-# Load user's custom configuration overrides
-bashio::log.debug "Loading 'conf_overrides'..."
-for var in $(bashio::config 'conf_overrides|keys'); do
-    property=$(bashio::config "conf_overrides[${var}].property")
-    value=$(bashio::config "conf_overrides[${var}].value")
-    if [[ ${property} =~ secret|password ]]; then
-        bashio::log.info "Setting ${property} to ******"
-    else
-        bashio::log.info "Setting ${property} to ${value}"
-    fi
-    conf_props+=("-D${property}=${value//\"/\\\"}")
-done
 
 # Set DB URL
 bashio::log.debug "Setting DB URL..."
@@ -54,16 +41,21 @@ conf_props+=( \
 
 # Set base URL
 bashio::log.debug "Setting base URL for Sharry..."
-if bashio::config.true 'use_ssl'; then
-    base_url='https://'
+if ! bashio::config.is_empty 'base_url'; then
+    # Full public URL given (e.g. behind a reverse proxy or Cloudflare tunnel)
+    base_url="$(bashio::config 'base_url')"
 else
-    base_url='http://'
+    if bashio::config.true 'use_ssl'; then
+        base_url='https://'
+    else
+        base_url='http://'
+    fi
+    base_url+="$(bashio::config 'domain')"
+    if bashio::var.has_value "$(bashio::addon.port 9090)"; then
+        base_url+=":$(bashio::addon.port 9090)"
+    fi
 fi
-base_url+="$(bashio::config 'domain')"
-if bashio::var.has_value "$(bashio::addon.port 9090)"; then
-    base_url+=":$(bashio::addon.port 9090)"
-fi
-bashio::log.info "Sharry will be available at ${base_url}"
+bashio::log.info "ShareIo will be available at ${base_url}"
 conf_props+=("-D${SHARRY}.base-url=${base_url}")
 
 # Add other config options to properties array
@@ -97,8 +89,22 @@ case "$(bashio::config 'log_level')" in \
     fatal)      log_level='Error' ;; \
     *)          log_level='Info' ;; \
 esac;
-bashio::log.info "Sharry log level set to ${log_level}"
+bashio::log.info "ShareIo log level set to ${log_level}"
 conf_props+=("-D${SHARRY}.logging.minimum-level=${log_level}")
+
+# Load user's custom configuration overrides last so they take precedence
+# (protected properties are rejected in cont-init.d/30-config.sh)
+bashio::log.debug "Loading 'conf_overrides'..."
+for var in $(bashio::config 'conf_overrides|keys'); do
+    property=$(bashio::config "conf_overrides[${var}].property")
+    value=$(bashio::config "conf_overrides[${var}].value")
+    if [[ ${property} =~ secret|password ]]; then
+        bashio::log.info "Setting ${property} to ******"
+    else
+        bashio::log.info "Setting ${property} to ${value}"
+    fi
+    conf_props+=("-D${property}=${value//\"/\\\"}")
+done
 
 # Print all config options for debugging
 bashio::log.debug

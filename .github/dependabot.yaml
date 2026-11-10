@@ -6,6 +6,6 @@ updates:
     schedule:
       interval: daily
   - package-ecosystem: docker
-    directory: "/sharry"
+    directory: "/shareio"
     schedule:
       interval: daily

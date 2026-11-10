@@ -1,7 +1,0 @@
----
-build_from:
-  amd64: ghcr.io/hassio-addons/base:12.2.3
-  aarch64: ghcr.io/hassio-addons/base:12.2.3
-codenotary:
-  base_image: codenotary@frenck.dev
-  signer: codenotary@degatano.com

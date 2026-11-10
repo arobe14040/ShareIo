@@ -1,18 +1,20 @@
 ARG BUILD_FROM=ghcr.io/hassio-addons/base
 
-# https://github.com/hassio-addons/addon-base/releases
+# https://github.com/hassio-addons/app-base/releases
 # hadolint ignore=DL3006
 FROM ${BUILD_FROM}
 
 # https://github.com/eikek/sharry/releases
-ARG SHARRY_VERSION=1.11.0
+ARG SHARRY_VERSION=1.17.0
 
 # Add Sharry and java
+# Package versions follow the Alpine release of the base image
+# hadolint ignore=DL3018
 RUN set -eux; \
     apk update; \
     \
     apk add --no-cache --virtual .build-deps \
-        unzip=6.0-r9 \
+        unzip \
         ; \
     mkdir -p /opt; \
     curl -s -J -L -o /tmp/sharry.zip \
@@ -23,13 +25,13 @@ RUN set -eux; \
     apk del .build-deps; \
     \
     apk add --no-cache \
-        mariadb-client=10.6.9-r0 \
-        netcat-openbsd=1.130-r3 \
-        openjdk11-jre=11.0.16.1_p1-r0 \
+        mariadb-client \
+        netcat-openbsd \
+        openjdk17-jre-headless \
         ; \
     java -version; \
     \
-    echo "Add user for Sharry" \
+    echo "Add user for Sharry"; \
     mkdir -p /data/sharry; \
     addgroup -S abc; \
     adduser -u 12345 -h /data/sharry -D -S abc -G abc; \
@@ -54,13 +56,13 @@ LABEL \
     io.hass.arch="${BUILD_ARCH}" \
     io.hass.type="addon" \
     io.hass.version=${BUILD_VERSION} \
-    maintainer="mdegat01" \
+    maintainer="ShareIo contributors" \
     org.opencontainers.image.title="${BUILD_NAME}" \
     org.opencontainers.image.description="${BUILD_DESCRIPTION}" \
-    org.opencontainers.image.vendor="mdegat01's Home Assistant Add-ons" \
-    org.opencontainers.image.authors="mdegat01" \
+    org.opencontainers.image.vendor="ShareIo" \
+    org.opencontainers.image.authors="ShareIo contributors" \
     org.opencontainers.image.licenses="MIT" \
-    org.opencontainers.image.url="https://github.com/mdegat01/hassio-addons" \
+    org.opencontainers.image.url="https://github.com/${BUILD_REPOSITORY}" \
     org.opencontainers.image.source="https://github.com/${BUILD_REPOSITORY}" \
     org.opencontainers.image.documentation="https://github.com/${BUILD_REPOSITORY}/blob/main/README.md" \
     org.opencontainers.image.created=${BUILD_DATE} \

@@ -1,13 +1,12 @@
 ---
-name: Sharry
-url: https://github.com/mdegat01/addon-sharry
+name: ShareIo
+url: https://github.com/arobe14040/ShareIo
 version: edge
-slug: sharry
+slug: shareio
 arch:
   - aarch64
   - amd64
-description: Sharry for Home Assistant
-codenotary: codenotary@degatano.com
+description: Simple self-hosted file sharing for Home Assistant, powered by Sharry
 init: false
 services:
   - mysql:want
@@ -29,8 +28,9 @@ options:
   log_level: info
   conf_overrides: []
 schema:
-  domain: match([^\/:]+)
+  domain: match([^\/:]+)?
   use_ssl: bool?
+  base_url: match(^https?://[^/]+$)?
   default_language: match([A-Za-z]{2})?
   share_max_size_gb: float(0.01,)?
   share_max_valid_days: int(1,)?

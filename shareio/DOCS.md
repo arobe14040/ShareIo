@@ -1,15 +1,15 @@
-# Home Assistant Add-on: Sharry
+# Home Assistant Add-on: ShareIo
+
+ShareIo is simple, self-hosted file sharing for Home Assistant, powered by
+[Sharry][sharry]. Upload files, get a link, send it to anyone.
 
 ## Install
 
-First add the repository to the add-on store (`https://github.com/mdegat01/hassio-addons`):
-
-[![Open your Home Assistant instance and show the add add-on repository dialog
-with a specific repository URL pre-filled.][add-repo-shield]][add-repo]
-
-Then find Sharry in the store and click install:
-
-[![Open your Home Assistant instance and show the dashboard of a Supervisor add-on.][add-addon-shield]][add-addon]
+1. In Home Assistant, go to **Settings → Add-ons → Add-on Store**, open the
+   **⋮** menu and choose **Repositories**.
+2. Add `https://github.com/arobe14040/ShareIo`.
+3. Find **ShareIo** in the store and click **Install**. The add-on is built on
+   your Home Assistant machine the first time, which can take a few minutes.
 
 ## Access & Login
 
@@ -41,7 +41,7 @@ set up the schema and manage the data.
 
 Please note that there is no easy upgrade path between these two options.
 
-## ⚠ Backing up Sharry
+## ⚠ Backing up ShareIo
 
 Since Sharry does not store its own data, snapshots of this add-on will only
 include its configuration. You will need to separately back up the data in order
@@ -68,9 +68,17 @@ conf_overrides:
 
 **Note**: _This is just an example, don't copy and paste it! Create your own!_
 
+### Option: `base_url`
+
+The full public address users will reach Sharry at, for example
+`https://share.example.com`. Use this when Sharry sits behind a reverse proxy or a
+Cloudflare tunnel. When set, it is used exactly as given and `domain`, `use_ssl`
+and the published port are ignored, so the port is never added to share links.
+Do not include a trailing slash or a path.
+
 ### Option: `domain`
 
-The domain users will access Sharry at. Sharry is given a base URL that it uses
+Only used when `base_url` is not set. The domain users will access Sharry at. Sharry is given a base URL that it uses
 for generating URLs and configuring cookies. That will be created from this option,
 the `use_ssl` option, and the port you list for `9090`. If the port isn't listed
 then the addon assumes users do not include a port in the URL when accessing Sharry.
@@ -181,29 +189,20 @@ based on the following:
 
 ## Support
 
-Got questions?
-
-You have several ways to get them answered:
-
-- The Home Assistant [Community Forum][forum]. I am
-  [CentralCommand][forum-centralcommand] there.
-- The Home Assistant [Discord Chat Server][discord-ha]. Use the #add-ons channel,
-  I am CentralCommand#0913 there.
-
-You could also [open an issue here][issue] on GitHub.
+Found a bug or have an idea? [Open an issue][issue] on GitHub.
 
 ## Authors & contributors
 
-The original setup of this repository is by [Mike Degatano][mdegat01].
-
-For a full list of all authors and contributors,
-check [the contributor's page][contributors].
+ShareIo is a fork of [addon-sharry][upstream-addon] by [Mike Degatano][mdegat01],
+which is no longer maintained. The file sharing server itself is
+[Sharry][sharry] by eikek.
 
 ## License
 
 MIT License
 
 Copyright (c) 2021-2022 Mike Degatano
+Copyright (c) 2026 ShareIo contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -224,23 +223,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 [add-addon-shield]: https://my.home-assistant.io/badges/supervisor_addon.svg
-[add-addon]: https://my.home-assistant.io/redirect/supervisor_addon/?addon=39bd2704_sharry
 [add-addon-mariadb]: https://my.home-assistant.io/redirect/supervisor_addon/?addon=core_mariadb
-[add-repo-shield]: https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg
-[add-repo]: https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fmdegat01%2Fhassio-addons
 [addon-mariadb]: https://github.com/home-assistant/addons/tree/master/mariadb
-[contributors]: https://github.com/mdegat01/addon-sharry/graphs/contributors
-[default-config]: https://github.com/mdegat01/addon-sharry/blob/main/sharry/rootfs/etc/sharry/sharry.conf
-[discord-ha]: https://discord.gg/c5DvZ4e
-[forum-centralcommand]: https://community.home-assistant.io/u/CentralCommand/?u=CentralCommand
-[forum]: https://community.home-assistant.io?u=CentralCommand
+[default-config]: https://github.com/arobe14040/ShareIo/blob/main/shareio/rootfs/etc/sharry/sharry.conf
 [hocon]: https://github.com/lightbend/config/blob/master/HOCON.md#hocon-human-optimized-config-object-notation
 [hocon-docs-arrays]: https://github.com/lightbend/config/blob/master/README.md#set-array-values-outside-configuration-files
 [hocon-docs-props]: https://github.com/lightbend/config/blob/master/HOCON.md#java-properties-mapping
 [iso-3166-1]: https://en.wikipedia.org/wiki/ISO_3166-1
-[issue]: https://github.com/mdegat01/addon-sharry/issues
+[issue]: https://github.com/arobe14040/ShareIo/issues
 [mdegat01]: https://github.com/mdegat01
-[releases]: https://github.com/mdegat01/addon-sharry/releases
+[releases]: https://github.com/arobe14040/ShareIo/releases
+[upstream-addon]: https://github.com/mdegat01/addon-sharry
 [semver]: http://semver.org/spec/v2.0.0
 [sharry]: https://eikek.github.io/sharry/
 [sharry-docs-configure]: https://eikek.github.io/sharry/doc/configure
