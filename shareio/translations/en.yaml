@@ -64,6 +64,12 @@ configuration:
     description: >-
       Deletes all ShareIo shares and accounts in the MariaDB add-on on the next
       start, then switches itself off. Cannot be undone.
+  database_report:
+    name: Database report on next start
+    description: >-
+      Writes database sizes and the shares and files stored in the database
+      (also from the older Sharry add-on) to the Log tab on the next start,
+      then switches itself off. Read-only.
   server_overrides:
     name: Server setting overrides
     description: >-

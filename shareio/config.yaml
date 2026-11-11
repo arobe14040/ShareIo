@@ -1,7 +1,7 @@
 ---
 name: ShareIo
 url: https://github.com/arobe14040/ShareIo
-version: 3.6.0
+version: 3.6.1
 slug: shareio
 arch:
   - aarch64
@@ -52,5 +52,6 @@ schema:
   remote_db_password: password?
   remote_db_database: str?
   reset_database: bool?
+  database_report: bool?
   server_overrides:
     - match(^sharry[.]restserver[.][-.a-z0-9]+=.*$)?
