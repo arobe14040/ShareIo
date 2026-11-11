@@ -154,7 +154,9 @@
     c.classList.add('is-visible');
     c.classList.toggle('is-failed', failed);
     c.classList.toggle('is-offline', offline);
+    c.classList.toggle('is-done', !ids.length && !failed);
     c.querySelector('.sio-upcard-title').textContent =
+      !ids.length && !failed ? 'Upload complete' :
       offline ? 'Waiting for connection' : failed ? 'Upload interrupted' : 'Uploading';
     c.querySelector('.sio-upcard-pct').textContent = pct + '%';
     c.querySelector('.sio-upcard-bar > div').style.width = pct + '%';
@@ -203,6 +205,9 @@
     };
     absorbOlder(b);
     persist(b);
+    // An upload is running (often the resume itself): the banner has done its job.
+    var banner = document.querySelector('.sio-resume');
+    if (banner) banner.remove();
     askNotifyPermission();
     keepAwake(true);
     render();
@@ -441,7 +446,18 @@
     dismiss.title = 'Forget this upload';
     dismiss.addEventListener('click', function () {
       var a = load();
-      open.forEach(function (k) { delete a[k]; });
+      open.forEach(function (k) {
+        // Also forget the upload engine's resume points for these files.
+        var url = a[k] && a[k].url;
+        if (url) {
+          Object.keys(localStorage).forEach(function (key) {
+            if (key.indexOf('tus-') === 0 && key.slice(-url.length - 1) === '-' + url) {
+              try { localStorage.removeItem(key); } catch (e) { /* ignore */ }
+            }
+          });
+        }
+        delete a[k];
+      });
       save(a);
       bar.remove();
     });

@@ -551,11 +551,10 @@ body.dark #content label[class*="dark:border-orange"] {
 
 .sio-resume {
   position: fixed;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 16px;
+  bottom: 16px;
   z-index: 9996;
-  width: min(760px, calc(100vw - 24px));
+  width: min(560px, calc(100vw - 32px));
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
@@ -571,7 +570,7 @@ body.dark #content label[class*="dark:border-orange"] {
   animation: sio-banner-in .25s ease-out;
 }
 @keyframes sio-banner-in {
-  from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+  from { opacity: 0; transform: translateY(10px); }
 }
 .sio-resume-text { flex: 1 1 320px; font-size: .9rem; line-height: 1.4; }
 .sio-resume-text strong { display: block; font-size: .95rem; margin-bottom: 2px; }
