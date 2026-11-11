@@ -568,7 +568,10 @@ body.dark #content label[class*="dark:border-orange"] {
   border: 1px solid color-mix(in srgb, #f59e0b 55%, var(--sio-border));
   box-shadow: var(--sio-shadow-lg);
   font-family: var(--sio-font);
-  animation: sio-toast-in .25s ease-out;
+  animation: sio-banner-in .25s ease-out;
+}
+@keyframes sio-banner-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
 }
 .sio-resume-text { flex: 1 1 320px; font-size: .9rem; line-height: 1.4; }
 .sio-resume-text strong { display: block; font-size: .95rem; margin-bottom: 2px; }

@@ -31,6 +31,21 @@
     return t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName));
   }
 
+  /* ---------- Floating UI container ---------- */
+
+  // One container at the end of <body>, after the app's own #main element.
+  // Being inside <body> keeps our messages and buttons visible to screen
+  // readers; staying outside #main keeps the app's rendering untouched.
+  function uiRoot() {
+    var r = document.getElementById('sio-root');
+    if (!r) {
+      r = document.createElement('div');
+      r.id = 'sio-root';
+      document.body.appendChild(r);
+    }
+    return r;
+  }
+
   /* ---------- Toasts ---------- */
 
   var toastBox;
@@ -44,7 +59,7 @@
       toastBox.className = 'sio-toasts';
       toastBox.setAttribute('role', 'status');
       toastBox.setAttribute('aria-live', 'polite');
-      document.documentElement.appendChild(toastBox);
+      uiRoot().appendChild(toastBox);
     }
     var icon = ICON[opts.icon] || opts.icon || ICON.check;
     var el = document.createElement('div');
@@ -70,6 +85,7 @@
   }
   window.ShareIo = window.ShareIo || {};
   window.ShareIo.toast = toast;
+  window.ShareIo.root = uiRoot;
 
   /* ---------- Theme follows the system until chosen ---------- */
 
@@ -135,7 +151,7 @@
       overlay = document.createElement('div');
       overlay.className = 'sio-drop-overlay';
       overlay.innerHTML = '<div><img alt="" src="' + assetBase + 'img/icon.svg">Drop to add files<small>They will be added to this share</small></div>';
-      document.documentElement.appendChild(overlay);
+      uiRoot().appendChild(overlay);
     }
     overlay.classList.toggle('is-active', on);
   }

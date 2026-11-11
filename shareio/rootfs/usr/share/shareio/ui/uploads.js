@@ -50,6 +50,10 @@
     if (html != null) e.innerHTML = html;
     return e;
   }
+  function root() {
+    if (window.ShareIo && window.ShareIo.root) return window.ShareIo.root();
+    return document.body;
+  }
   function toast(text, opts) {
     if (window.ShareIo && window.ShareIo.toast) return window.ShareIo.toast(text, opts);
   }
@@ -113,7 +117,7 @@
       '<div class="sio-upcard-actions"></div>');
     card.setAttribute('role', 'status');
     card.setAttribute('aria-live', 'polite');
-    document.documentElement.appendChild(card);
+    root().appendChild(card);
     return card;
   }
   function hideCard(delay) {
@@ -442,7 +446,7 @@
       bar.remove();
     });
     actions.appendChild(dismiss);
-    document.documentElement.appendChild(bar);
+    root().appendChild(bar);
   }
 
   /* ---------- Hook into the app ---------- */
