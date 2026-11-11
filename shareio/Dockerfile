@@ -48,11 +48,12 @@ ARG QRCODE_SHA1=63f771224854759329a99048806a53ed278740e7
 RUN set -eux; \
     curl -fsSL -o /tmp/qrcode.tgz \
         "https://registry.npmjs.org/qrcode-generator/-/qrcode-generator-${QRCODE_VERSION}.tgz"; \
-    echo "${QRCODE_SHA1}  /tmp/qrcode.tgz" | sha1sum -c -; \
+    printf '%s  %s\n' "${QRCODE_SHA1}" /tmp/qrcode.tgz > /tmp/qrcode.sha1; \
+    sha1sum -c /tmp/qrcode.sha1; \
     mkdir -p /usr/share/shareio/ui/vendor; \
     tar -xzf /tmp/qrcode.tgz -C /tmp package/qrcode.js; \
     mv /tmp/package/qrcode.js /usr/share/shareio/ui/vendor/qrcode.js; \
-    rm -rf /tmp/qrcode.tgz /tmp/package
+    rm -rf /tmp/qrcode.tgz /tmp/qrcode.sha1 /tmp/package
 
 WORKDIR /data/shareio
 
