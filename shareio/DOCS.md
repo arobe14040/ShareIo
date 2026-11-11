@@ -16,6 +16,20 @@ get a link, send it to anyone.
   and **Save QR** to download the QR code as an image.
 - **Keyboard shortcuts:** <kbd>N</kbd> new share, <kbd>A</kbd> new alias,
   <kbd>/</kbd> search.
+- **Upload status card:** files done, percent, speed and time left, plus
+  progress in the browser tab title.
+- **Done confirmation:** a message when uploads finish. If the tab is in the
+  background you also get a desktop notification (allow it when asked) and a
+  short chime.
+- **Resume uploads:** if the page is closed or reloaded mid-upload, ShareIo
+  shows an "Unfinished upload" banner. Open the share, choose **Add files** and
+  pick the same files; they continue from where they stopped instead of
+  starting over.
+- **Survives bad connections:** uploads pause when the connection drops and
+  resume automatically when it returns. Failed chunks are retried for about
+  4.5 minutes, and a **Retry** button appears if a file still fails.
+- **Safe uploads:** a warning before closing the tab mid-upload, and the
+  screen stays awake while files upload.
 - **Installable app:** add ShareIo to your home screen or desktop from the
   browser.
 

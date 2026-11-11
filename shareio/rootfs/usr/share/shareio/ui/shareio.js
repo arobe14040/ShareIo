@@ -20,7 +20,8 @@
     check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
     share: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="m16 6-4-4-4 4"/><path d="M12 2v14"/></svg>',
     qr: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg>',
-    clip: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>'
+    clip: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>',
+    warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>'
   };
 
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -33,7 +34,11 @@
   /* ---------- Toasts ---------- */
 
   var toastBox;
-  function toast(text, icon) {
+  // toast(text, iconSvg) or toast(text, { icon: 'check'|'warn'|svg,
+  //   action: { label, onClick }, duration: ms })
+  function toast(text, opts) {
+    if (typeof opts === 'string') opts = { icon: opts };
+    opts = opts || {};
     if (!toastBox) {
       toastBox = document.createElement('div');
       toastBox.className = 'sio-toasts';
@@ -41,16 +46,30 @@
       toastBox.setAttribute('aria-live', 'polite');
       document.documentElement.appendChild(toastBox);
     }
+    var icon = ICON[opts.icon] || opts.icon || ICON.check;
     var el = document.createElement('div');
-    el.className = 'sio-toast';
-    el.innerHTML = (icon || ICON.check) + '<span></span>';
-    el.lastChild.textContent = text;
-    toastBox.appendChild(el);
-    setTimeout(function () {
+    el.className = 'sio-toast' + (opts.icon === 'warn' ? ' is-warn' : '');
+    el.innerHTML = icon + '<span></span>';
+    el.querySelector('span').textContent = text;
+    var close = function () {
+      if (el.classList.contains('is-leaving')) return;
       el.classList.add('is-leaving');
       setTimeout(function () { el.remove(); }, 220);
-    }, 2200);
+    };
+    if (opts.action) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'sio-toast-action';
+      b.textContent = opts.action.label;
+      b.addEventListener('click', function () { close(); opts.action.onClick(); });
+      el.appendChild(b);
+    }
+    toastBox.appendChild(el);
+    while (toastBox.children.length > 4) toastBox.firstChild.remove();
+    setTimeout(close, opts.duration || 2400);
   }
+  window.ShareIo = window.ShareIo || {};
+  window.ShareIo.toast = toast;
 
   /* ---------- Theme follows the system until chosen ---------- */
 

@@ -1,7 +1,7 @@
 ---
 name: ShareIo
 url: https://github.com/arobe14040/ShareIo
-version: 3.2.3
+version: 3.3.0
 slug: shareio
 arch:
   - aarch64
