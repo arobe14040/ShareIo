@@ -1,16 +1,23 @@
 # ShareIo
 
+![ShareIo – simple file sharing for Home Assistant][img-banner]
+
 Simple, self-hosted file sharing for Home Assistant. Upload files, get a link,
 send it. Or create an upload link so others can send files to you.
 
 ## Getting started
 
-1. Install the **MariaDB** add-on and start it (ShareIo stores its data there).
+1. Install the **MariaDB** add-on and start it (ShareIo stores its data there):
+
+   [![Open the MariaDB add-on in your Home Assistant][badge-addon]][mariadb]
+
 2. Start **ShareIo**.
 3. Click **ShareIo** in the Home Assistant sidebar. You are logged in
    automatically with your Home Assistant account.
 
 There is nothing else to set up. Everything below is optional.
+
+![Uploading files with progress, speed and time left][img-upload]
 
 ## Using ShareIo
 
@@ -41,6 +48,8 @@ There is nothing else to set up. Everything below is optional.
 
 Desktop notifications and keeping the screen awake during uploads only work
 when Home Assistant is opened over `https://`.
+
+![Your shares][img-shares]
 
 ## Sharing with people outside Home Assistant
 
@@ -151,7 +160,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+[badge-addon]: https://my.home-assistant.io/badges/supervisor_addon.svg
+[img-banner]: https://raw.githubusercontent.com/arobe14040/ShareIo/main/images/banner.png
+[img-upload]: https://raw.githubusercontent.com/arobe14040/ShareIo/main/images/upload-progress-framed.png
+[img-shares]: https://raw.githubusercontent.com/arobe14040/ShareIo/main/images/shares-framed.png
 [issue]: https://github.com/arobe14040/ShareIo/issues
+[mariadb]: https://my.home-assistant.io/redirect/supervisor_addon/?addon=core_mariadb
 [mdegat01]: https://github.com/mdegat01
 [sharry]: https://eikek.github.io/sharry/
 [sharry-docs-configure]: https://eikek.github.io/sharry/doc/configure
