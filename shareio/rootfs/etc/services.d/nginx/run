@@ -5,6 +5,16 @@
 # Runs NGINX, which serves ShareIo to Home Assistant ingress and the direct port
 # ==============================================================================
 
+# Without a public URL, make the direct-access web app use the address the
+# page was opened with (IP, hostname or proxy), so no address must be set.
+mkdir -p /run/shareio
+if bashio::config.is_empty 'base_url'; then
+    echo "sub_filter 'var storedAccount = ' 'sharryFlags.baseUrl = window.location.origin; var storedAccount = ';" \
+        > /run/shareio/nginx-public.conf
+else
+    : > /run/shareio/nginx-public.conf
+fi
+
 # Wait for the ShareIo server before accepting connections
 bashio::net.wait_for 9091 127.0.0.1 300
 

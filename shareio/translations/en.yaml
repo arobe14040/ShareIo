@@ -1,0 +1,64 @@
+---
+configuration:
+  share_max_size_gb:
+    name: Maximum share size (GB)
+    description: >-
+      Largest total size of one share. Uploads beyond this are refused.
+  share_max_valid_days:
+    name: Longest link lifetime (days)
+    description: >-
+      The longest time a share link can stay valid. People pick a shorter time
+      when they create a share.
+  base_url:
+    name: Public URL
+    description: >-
+      Only needed to share links with people outside Home Assistant, for
+      example https://share.example.com behind a reverse proxy or Cloudflare
+      tunnel. Leave empty to use the address the page was opened with.
+  default_language:
+    name: Default language
+    description: >-
+      Two-letter country code of the default language, for example us, gb, de,
+      fr. Everyone can change it in the menu.
+  theme:
+    name: Default theme
+    description: >-
+      Light or dark. When empty, ShareIo follows each device's system setting.
+  log_level:
+    name: Log level
+    description: How much detail to write to the add-on log. Default is info.
+  server_secret:
+    name: Server secret
+    description: >-
+      Signs login sessions. Generated automatically and kept in the add-on's
+      data; only set it to replace the generated one.
+  remote_db_type:
+    name: External database type
+    description: >-
+      Use your own MariaDB or PostgreSQL server instead of the MariaDB add-on.
+      Fill in all external database options to enable this.
+  remote_db_host:
+    name: External database host
+  remote_db_port:
+    name: External database port
+  remote_db_username:
+    name: External database username
+  remote_db_password:
+    name: External database password
+  remote_db_database:
+    name: External database name
+  reset_database:
+    name: Reset database on next start
+    description: >-
+      Deletes all ShareIo shares and accounts in the MariaDB add-on on the next
+      start, then switches itself off. Cannot be undone.
+  server_overrides:
+    name: Server setting overrides
+    description: >-
+      Expert option. Extra settings for the file sharing server, one per line as
+      property=value, for example
+      sharry.restserver.webapp.welcome-message=Hello. See the documentation.
+network:
+  9090/tcp: >-
+    Direct access, only needed for public share links. The sidebar panel works
+    without it.

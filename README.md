@@ -2,39 +2,39 @@
 
 Simple, self-hosted file sharing for Home Assistant.
 
-Drag files in, get a link, send it to anyone. You can also create upload links
-so other people can send files to you. Home Assistant users log in with their
-normal Home Assistant account.
+Drag files in, get a link, send it. Or create an upload link so others can send
+files to you. ShareIo lives in the Home Assistant sidebar and logs you in with
+your Home Assistant account, so there is nothing to set up.
 
 ![Supports aarch64 Architecture][aarch64-shield]
 ![Supports amd64 Architecture][amd64-shield]
 
 ## Install
 
-1. In Home Assistant, go to **Settings → Add-ons → Add-on Store**, open the
-   **⋮** menu and choose **Repositories**.
-2. Add `https://github.com/arobe14040/ShareIo`.
-3. Find **ShareIo** in the store and click **Install**.
+1. Install and start the [MariaDB add-on][addon-mariadb].
+2. In Home Assistant, go to **Settings → Add-ons → Add-on Store**, open the
+   **⋮** menu, choose **Repositories** and add
+   `https://github.com/arobe14040/ShareIo`.
+3. Install **ShareIo**, start it and open it from the sidebar.
 
-ShareIo stores its data in the [MariaDB add-on][addon-mariadb], which must be
-installed and running first. See the [documentation](shareio/DOCS.md) for all
-options, including `base_url` for use behind a reverse proxy or Cloudflare tunnel.
+See the [documentation](shareio/DOCS.md) for features, public sharing and
+advanced options.
 
-## Background
+## Highlights
 
-ShareIo is a fork of [addon-sharry][upstream-addon] by Mike Degatano, which has
-not been updated since 2022.
+- Sidebar panel with automatic Home Assistant login
+- Drag and drop or paste files, QR codes and phone share sheet for links
+- Upload progress with speed and time left, completion alerts
+- Interrupted uploads resume where they stopped
+- Light and dark theme, installable as an app
+- Optional public links through your own domain
 
-- File sharing server 1.17 (was 1.11) on Java 17 and a current add-on base image
-- New `base_url` option, so share links work behind a tunnel or reverse proxy
-- `conf_overrides` now actually override the add-on's own settings
-- A minimal server config that follows upstream defaults, branded as ShareIo
+## Credits
 
-## License
-
-MIT License. See [LICENSE](LICENSE). The file sharing server inside ShareIo is the
-open-source Sharry project by eikek:
-<https://github.com/eikek/sharry>.
+A fork of [addon-sharry][upstream-addon] by Mike Degatano, which is no longer
+maintained. The file sharing server is the open-source
+[Sharry](https://github.com/eikek/sharry) project by eikek. MIT License, see
+[LICENSE](LICENSE).
 
 [aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg

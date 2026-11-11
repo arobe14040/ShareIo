@@ -1,7 +1,7 @@
 ---
 name: ShareIo
 url: https://github.com/arobe14040/ShareIo
-version: 3.3.5
+version: 3.4.0
 slug: shareio
 arch:
   - aarch64
@@ -15,29 +15,25 @@ ingress: true
 ingress_stream: true
 panel_icon: mdi:share-variant
 panel_title: ShareIo
+# Not published by default: the sidebar panel needs no port. Publish it under
+# Network only to share links with people outside Home Assistant.
 ports:
-  9090/tcp: 9090
+  9090/tcp: null
 ports_description:
-  9090/tcp: Direct access (optional, for public share links)
+  9090/tcp: Direct access, only needed for public share links
+# Shown on the Configuration page. Everything else is optional and appears under
+# "Show unused optional configuration options" (see translations/en.yaml).
 options:
-  domain: homeassistant.local
-  use_ssl: false
-  default_language: us
-  share_max_size_gb: 1.5
-  share_max_valid_days: 365
-  server_secret: null
-  theme: light
-  log_level: info
-  conf_overrides: []
+  share_max_size_gb: 20
+  share_max_valid_days: 30
 schema:
-  domain: match([^\/:]+)?
-  use_ssl: bool?
+  share_max_size_gb: float(0.01,)
+  share_max_valid_days: int(1,)
   base_url: match(^https?://[^/]+$)?
-  default_language: match([A-Za-z]{2})?
-  share_max_size_gb: float(0.01,)?
-  share_max_valid_days: int(1,)?
-  server_secret: password
+  default_language: match(^[A-Za-z]{2}$)?
   theme: list(light|dark)?
+  log_level: list(trace|debug|info|notice|warning|error|fatal)?
+  server_secret: password?
   remote_db_type: list(mariadb|postgres)?
   remote_db_host: str?
   remote_db_port: port?
@@ -45,7 +41,5 @@ schema:
   remote_db_password: password?
   remote_db_database: str?
   reset_database: bool?
-  log_level: list(trace|debug|info|notice|warning|error|fatal)?
-  conf_overrides:
-    - property: match(^sharry[.]restserver[.][-.a-z0-9]+)
-      value: str
+  server_overrides:
+    - match(^sharry[.]restserver[.][-.a-z0-9]+=.*$)?

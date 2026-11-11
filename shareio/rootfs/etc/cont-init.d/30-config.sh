@@ -2,62 +2,41 @@
 # shellcheck shell=bash
 # ==============================================================================
 # Home Assistant Add-on: ShareIo
-# This validates config, creates the database and sets up app files/folders
+# Validates the configuration, creates the server secret and the database
 # ==============================================================================
 readonly DATABASE=shareio
+readonly SECRET_FILE=/data/server_secret
 declare host
 declare port
 declare username
 declare password
+declare override
 declare property
 
-# --- ADDITIONAL VALIDATION ---
-if bashio::config.is_empty 'base_url' && bashio::config.is_empty 'domain'; then
-    bashio::log.fatal
-    bashio::log.fatal "Either 'base_url' or 'domain' must be set so ShareIo knows"
-    bashio::log.fatal "the address users will reach it at."
-    bashio::log.fatal
-    bashio::exit.nok
+# --- SERVER SECRET ---
+# Generated once and kept in the add-on data unless one is configured.
+if bashio::config.is_empty 'server_secret' && [[ ! -s "${SECRET_FILE}" ]]; then
+    bashio::log.info 'Generating a server secret...'
+    (umask 077 && head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n' > "${SECRET_FILE}")
 fi
 
-for var in $(bashio::config 'conf_overrides|keys'); do
-    property=$(bashio::config "conf_overrides[${var}].property")
-    if [[ ${property} =~ ^sharry[.]restserver[.]backend[.]auth[.]command ]]; then
-        bashio::log.fatal
-        bashio::log.fatal "Your config attempts to override settings in the command"
-        bashio::log.fatal "auth module. This is not allowed as it would break the ability"
-        bashio::log.fatal "of this addon to authenticate users with Home Assistant."
-        bashio::log.fatal
-        bashio::log.fatal "Remove any conf_overrides you have added with a property"
-        bashio::log.fatal "matching this pattern and try again:"
-        bashio::log.fatal "'sharry.restserver.backend.auth.command.*'"
-        bashio::log.fatal
-        bashio::exit.nok
-
-    elif [[ ${property} =~ ^sharry[.]restserver[.]backend[.]files ]]; then
-        bashio::log.fatal
-        bashio::log.fatal "Your config attempts to override settings in the files module."
-        bashio::log.fatal "This is not allowed as it could break the addon."
-        bashio::log.fatal
-        bashio::log.fatal "Remove any conf_overrides you have added with a property"
-        bashio::log.fatal "matching this pattern and try again:"
-        bashio::log.fatal "'sharry.restserver.backend.files.*'"
-        bashio::log.fatal
-        bashio::exit.nok
-
-    elif [[ ${property} =~ ^sharry[.]restserver[.](bind|backend[.]auth[.]proxy) ]]; then
-        bashio::log.fatal
-        bashio::log.fatal "Your config attempts to override the server's listen address"
-        bashio::log.fatal "or the Home Assistant login used by the sidebar panel."
-        bashio::log.fatal "This is not allowed as it would let others log in as any user."
-        bashio::log.fatal
-        bashio::log.fatal "Remove any conf_overrides you have added with a property"
-        bashio::log.fatal "matching these patterns and try again:"
-        bashio::log.fatal "'sharry.restserver.bind.*', 'sharry.restserver.backend.auth.proxy.*'"
-        bashio::log.fatal
-        bashio::exit.nok
-    fi
-done
+# --- VALIDATE SERVER OVERRIDES ---
+# One "property=value" per entry. Some properties are protected because
+# changing them would break Home Assistant login, file storage or security.
+if bashio::config.has_value 'server_overrides'; then
+    while IFS= read -r override; do
+        [[ -z "${override}" ]] && continue
+        property="${override%%=*}"
+        if [[ ${property} =~ ^sharry[.]restserver[.](backend[.]auth[.](command|proxy)|backend[.]files|bind)([.]|$) ]]; then
+            bashio::log.fatal
+            bashio::log.fatal "The server override '${property}' is not allowed."
+            bashio::log.fatal "Changing it would break Home Assistant login, file storage"
+            bashio::log.fatal "or let others log in as any user. Remove it and try again."
+            bashio::log.fatal
+            bashio::exit.nok
+        fi
+    done < <(bashio::config 'server_overrides')
+fi
 
 # --- SET UP DATABASE ---
 bashio::log.debug 'Setting up database.'
