@@ -9,6 +9,18 @@ configuration:
     description: >-
       The longest time a share link can stay valid. People pick a shorter time
       when they create a share.
+  storage_location:
+    name: Storage location
+    description: >-
+      Where uploaded files are kept: addon_data (inside ShareIo, included in
+      ShareIo backups), share (the Share folder) or media (the Media folder).
+      Changing it moves the files on the next start. Chosen on first start.
+  storage_folder:
+    name: Storage folder
+    description: >-
+      Optional folder inside Share or Media, for example Family/Uploads.
+      ShareIo keeps its files in a ShareIo subfolder there and never touches
+      other files.
   base_url:
     name: Public URL
     description: >-

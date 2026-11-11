@@ -73,6 +73,10 @@ profile shareio flags=(attach_disconnected,mediate_deleted) {
   @{do_var}/lib/nginx/{,**}                           rwk,
   @{do_var}/log/nginx/{,**}                           rw,
   @{do_usr}/share/shareio/{,**}                      r,
+
+  # File storage locations (create, move and list folders during setup)
+  /share/{,**}                                        rw,
+  /media/{,**}                                        rw,
   @{sys}/devices/system/cpu/{,**}                     r,
 
   # Programs
@@ -92,6 +96,8 @@ profile shareio flags=(attach_disconnected,mediate_deleted) {
     # Addon data
     /data/**                                          r,
     /data/shareio/**                                   rwk,
+    /share/**                                          rwk,
+    /media/**                                          rwk,
 
     # Config
     @{do_etc}/shareio/*                                r,

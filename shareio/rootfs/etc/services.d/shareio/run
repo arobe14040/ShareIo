@@ -66,6 +66,9 @@ else
     conf_props+=("-D${PREFIX}.backend.auth.server-secret=$(bashio::config 'server_secret')")
 fi
 
+# File storage folder, prepared by cont-init.d/30-config.sh
+conf_props+=("-D${PREFIX}.backend.files.stores.filesystem.directory=$(cat /data/storage_last)")
+
 if ! bashio::config.is_empty 'theme'; then
     conf_props+=("-D${PREFIX}.webapp.initial-theme=$(bashio::config 'theme')")
 fi

@@ -1,7 +1,7 @@
 ---
 name: ShareIo
 url: https://github.com/arobe14040/ShareIo
-version: 3.5.0
+version: 3.6.0
 slug: shareio
 arch:
   - aarch64
@@ -18,6 +18,12 @@ panel_title: ShareIo
 # Let every Home Assistant user (not only admins) open ShareIo; each one gets
 # their own ShareIo account through the automatic Home Assistant login.
 panel_admin: false
+# Folders that can hold ShareIo's files ("Storage location" option)
+map:
+  - type: share
+    read_only: false
+  - type: media
+    read_only: false
 # Not published by default: the sidebar panel needs no port. Publish it under
 # Network only to share links with people outside Home Assistant.
 ports:
@@ -32,6 +38,8 @@ options:
 schema:
   share_max_size_gb: float(0.01,)
   share_max_valid_days: int(1,)
+  storage_location: list(addon_data|share|media)?
+  storage_folder: str?
   base_url: match(^https?://[^/]+$)?
   default_language: match(^[A-Za-z]{2}$)?
   theme: list(light|dark)?

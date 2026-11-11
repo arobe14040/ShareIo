@@ -88,6 +88,7 @@
   window.ShareIo = window.ShareIo || {};
   window.ShareIo.toast = toast;
   window.ShareIo.root = uiRoot;
+  window.ShareIo.haParent = function () { return haParent(); };
 
   /* ---------- Theme follows the system until chosen ---------- */
 

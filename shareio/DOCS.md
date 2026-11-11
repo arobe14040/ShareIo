@@ -15,7 +15,14 @@ send it. Or create an upload link so others can send files to you.
 3. Click **ShareIo** in the Home Assistant sidebar. You are logged in
    automatically with your Home Assistant account.
 
-There is nothing else to set up. Everything below is optional.
+The first time an administrator opens ShareIo, it asks where to store files:
+
+- **In ShareIo** (recommended): private to ShareIo and included in ShareIo's
+  backups.
+- **Share folder** or **Media folder**: pick a folder with the built-in browser.
+  The files are then also reachable with Samba or file browser add-ons.
+
+ShareIo saves the choice and restarts. Everything below is optional.
 
 ![Uploading files with progress, speed and time left][img-upload]
 
@@ -76,6 +83,12 @@ The Configuration tab only shows what most people may want to change:
 | --- | --- | --- |
 | Maximum share size (GB) | 20 | Largest total size of one share. |
 | Longest link lifetime (days) | 30 | The longest time a share link can stay valid. |
+| Storage location | chosen on first start | `addon_data` (inside ShareIo), `share` or `media`. |
+| Storage folder | empty | Optional folder inside Share or Media, for example `Family/Uploads`. |
+
+Changing the storage location or folder moves ShareIo's files there on the next
+start. ShareIo always keeps its files in its own `ShareIo` subfolder, so other
+files in the chosen folder are never moved or deleted.
 
 ### Advanced options
 
@@ -109,9 +122,17 @@ protected and stop the add-on with an explanation if overridden.
 
 ## Backups
 
-Shares and accounts are stored in the MariaDB add-on (or your external
-database), not in ShareIo itself. Include the **MariaDB** add-on in your
-backups. Uninstalling MariaDB also removes ShareIo's data.
+ShareIo keeps its data in two places; back up both:
+
+- **The files** are on disk in the storage location: inside ShareIo (included
+  when you back up the ShareIo add-on), or in your Share or Media folder
+  (include that folder in your backups).
+- **Shares and accounts** (names, links, expiry) are in the MariaDB add-on (or
+  your external database). Include the **MariaDB** add-on in your backups.
+
+Uninstalling MariaDB removes the share information; uninstalling ShareIo removes
+files stored inside ShareIo. Versions before 3.6 kept the files in the database
+too; they are copied to the storage location automatically on start.
 
 ## Troubleshooting
 

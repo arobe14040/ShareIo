@@ -15,6 +15,26 @@ else
     : > /run/shareio/nginx-public.conf
 fi
 
+# First-run setup: until a storage location is chosen, the sidebar shows a
+# setup screen (setup.js) that can browse folders in /share and /media.
+setup=false
+bashio::config.is_empty 'storage_location' && setup=true
+printf '{"setup":%s,"slug":"%s","path":"%s"}\n' \
+    "${setup}" "$(bashio::addon.slug)" "$(cat /data/storage_last)" > /run/shareio/state.json
+if [[ "${setup}" == true ]]; then
+    cat > /run/shareio/nginx-setup.conf <<'EOF'
+location ~ ^/app/shareio-setup/browse/(share|media)(/.*)?$ {
+    limit_except GET { deny all; }
+    alias /$1$2;
+    autoindex on;
+    autoindex_format json;
+    add_header Cache-Control "no-store";
+}
+EOF
+else
+    : > /run/shareio/nginx-setup.conf
+fi
+
 # Wait for the ShareIo server before accepting connections
 bashio::net.wait_for 9091 127.0.0.1 300
 

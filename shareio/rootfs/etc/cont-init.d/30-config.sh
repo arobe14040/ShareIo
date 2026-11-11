@@ -2,7 +2,7 @@
 # shellcheck shell=bash
 # ==============================================================================
 # Home Assistant Add-on: ShareIo
-# Validates the configuration, creates the server secret and the database
+# Validates the configuration, prepares file storage, the secret and database
 # ==============================================================================
 readonly DATABASE=shareio
 readonly SECRET_FILE=/data/server_secret
@@ -37,6 +37,55 @@ if bashio::config.has_value 'server_overrides'; then
         fi
     done < <(bashio::config 'server_overrides')
 fi
+
+# --- FILE STORAGE ---
+# Files are kept on disk. ShareIo always uses its own "ShareIo" subfolder in
+# the chosen place, so moving between locations never touches other files.
+readonly STORAGE_LAST=/data/storage_last
+declare storage_location
+declare storage_folder
+declare storage_path
+declare storage_previous=''
+storage_location=$(bashio::config 'storage_location')
+storage_folder=$(bashio::config 'storage_folder')
+[[ "${storage_folder}" == 'null' ]] && storage_folder=''
+storage_folder="${storage_folder#/}"
+storage_folder="${storage_folder%/}"
+if [[ -n "${storage_folder}" ]] \
+    && { [[ ! "${storage_folder}" =~ ^[A-Za-z0-9._\ -]+(/[A-Za-z0-9._\ -]+)*$ ]] \
+         || [[ "/${storage_folder}/" == */../* ]] || [[ "/${storage_folder}/" == */./* ]]; }; then
+    bashio::log.fatal
+    bashio::log.fatal "Storage folder '${storage_folder}' is not a valid folder name."
+    bashio::log.fatal "Use letters, numbers, spaces, '.', '_', '-' and '/' between folders."
+    bashio::log.fatal
+    bashio::exit.nok
+fi
+case "${storage_location}" in
+    share) storage_path="/share/${storage_folder:+${storage_folder}/}ShareIo" ;;
+    media) storage_path="/media/${storage_folder:+${storage_folder}/}ShareIo" ;;
+    *)     storage_path='/data/shareio/files' ;;
+esac
+bashio::log.info "Storing files in ${storage_path}"
+
+[[ -s "${STORAGE_LAST}" ]] && storage_previous=$(cat "${STORAGE_LAST}")
+mkdir -p "${storage_path}"
+if [[ -n "${storage_previous}" ]] && [[ "${storage_previous}" != "${storage_path}" ]] \
+    && [[ -d "${storage_previous}" ]] && [[ -n "$(ls -A "${storage_previous}")" ]]; then
+    bashio::log.notice "Storage location changed: moving files from ${storage_previous}..."
+    if cp -a "${storage_previous}/." "${storage_path}/"; then
+        rm -rf "${storage_previous}"
+        bashio::log.notice "Files moved to ${storage_path}"
+    else
+        bashio::log.fatal
+        bashio::log.fatal "Could not move files from ${storage_previous} to ${storage_path}"
+        bashio::log.fatal "(not enough space?). Nothing was deleted; the old location"
+        bashio::log.fatal "still has all files. Fix the problem or switch back."
+        bashio::log.fatal
+        bashio::exit.nok
+    fi
+fi
+chown -R abc:abc "${storage_path}"
+echo "${storage_path}" > "${STORAGE_LAST}"
 
 # --- SET UP DATABASE ---
 bashio::log.debug 'Setting up database.'
@@ -96,6 +145,9 @@ else
         bashio::log.warning 'Resetting database...'
         echo "DROP DATABASE IF EXISTS \`${DATABASE}\`;" \
             | mysql -h "${host}" -P "${port}" -u "${username}" -p"${password}"
+        # The files belong to the deleted shares; remove them too.
+        find "${storage_path}" -mindepth 1 -delete
+        bashio::log.warning "Deleted stored files in ${storage_path}"
 
         # Remove `reset_database` option
         bashio::addon.option 'reset_database'

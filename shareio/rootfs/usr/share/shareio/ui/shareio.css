@@ -626,3 +626,95 @@ html.sio-friend-mode #content div[class*="md:flex-row"]:has([id$="copy-to-clipbo
   padding: 6px;
 }
 .sio-friend-note { margin: .6rem 0 0; font-size: .82rem; color: var(--sio-muted); }
+
+/* ---------- First-run setup ---------- */
+
+.sio-setup {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: color-mix(in srgb, #0b0b1a 45%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  font-family: var(--sio-font);
+}
+.sio-setup-box {
+  width: min(560px, 100%);
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  padding: 24px;
+  border-radius: 20px;
+  background: var(--sio-surface);
+  color: var(--sio-text);
+  border: 1px solid var(--sio-border);
+  box-shadow: var(--sio-shadow-lg);
+  animation: sio-banner-in .25s ease-out;
+}
+.sio-setup-box h2 { margin: 0 0 .4rem; font-size: 1.35rem; font-weight: 750; letter-spacing: -.01em; }
+.sio-setup-lead { margin: 0 0 1rem; color: var(--sio-muted); font-size: .93rem; }
+.sio-setup-choices { display: grid; gap: .6rem; }
+.sio-setup-choice {
+  display: flex;
+  gap: .75rem;
+  align-items: flex-start;
+  padding: .8rem .9rem;
+  border-radius: var(--sio-radius);
+  border: 1.5px solid var(--sio-border);
+  cursor: pointer;
+}
+.sio-setup-choice:has(input:checked) {
+  border-color: var(--sio-brand-1);
+  background: color-mix(in srgb, var(--sio-brand-1) 7%, var(--sio-surface));
+}
+.sio-setup-choice input { margin-top: .2rem; accent-color: var(--sio-brand-1); }
+.sio-setup-choice-body { display: grid; gap: .15rem; font-size: .88rem; color: var(--sio-muted); }
+.sio-setup-choice-body strong { color: var(--sio-text); font-size: .98rem; }
+.sio-setup-choice-body em {
+  margin-left: .5rem;
+  padding: .05rem .5rem;
+  border-radius: 999px;
+  background: var(--sio-grad);
+  color: #fff;
+  font-style: normal;
+  font-size: .7rem;
+  font-weight: 700;
+  vertical-align: middle;
+}
+.sio-setup-browser { margin-top: .9rem; }
+.sio-setup-crumbs { display: flex; flex-wrap: wrap; gap: .2rem; align-items: center; font-family: var(--sio-mono); font-size: .85rem; }
+.sio-setup-crumb { border: 0; background: none; color: var(--sio-brand-1); font: inherit; cursor: pointer; padding: .1rem .2rem; border-radius: 6px; }
+.sio-setup-crumb:hover { background: var(--sio-surface-2); }
+.sio-setup-folders {
+  list-style: none;
+  margin: .5rem 0 0;
+  padding: .3rem;
+  max-height: 200px;
+  overflow: auto;
+  border-radius: var(--sio-radius);
+  border: 1px solid var(--sio-border);
+  background: var(--sio-surface-2);
+}
+.sio-setup-folder {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: .45rem .6rem;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--sio-text);
+  font: inherit;
+  font-size: .9rem;
+  cursor: pointer;
+}
+.sio-setup-folder::before { content: "\1F4C1"; margin-right: .5rem; }
+.sio-setup-folder:hover { background: var(--sio-surface); }
+.sio-setup-empty, .sio-setup-loading { padding: .45rem .6rem; color: var(--sio-muted); font-size: .88rem; }
+.sio-setup-target { margin: .6rem 0 0; font-size: .85rem; color: var(--sio-muted); }
+.sio-setup-status { min-height: 1.2em; margin: .9rem 0 0; font-size: .88rem; color: var(--sio-muted); }
+.sio-setup-actions { display: flex; justify-content: flex-end; gap: .5rem; margin-top: 1rem; }
+.sio-setup-actions .sio-btn:disabled { opacity: .55; cursor: default; }
