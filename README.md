@@ -24,10 +24,10 @@ so there is nothing to set up.
 
 1. Install and start the [MariaDB add-on][addon-mariadb] (ShareIo stores its
    data there).
-2. Click **Add repository** above, or go to **Settings → Add-ons → Add-on
+2. Click **Add app repository** above, or go to **Settings → Add-ons → Add-on
    Store**, open the **⋮** menu, choose **Repositories** and add
    `https://github.com/arobe14040/ShareIo`.
-3. Click **Open add-on** above (or find **ShareIo** in the store), install and
+3. Click **Show app** above (or find **ShareIo** in the store), install and
    start it, then open **ShareIo** from the sidebar.
 
 ## Features
