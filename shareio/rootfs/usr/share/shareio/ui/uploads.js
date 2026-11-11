@@ -178,7 +178,9 @@
       actions.appendChild(retry);
     }
     if (ids.length) {
-      document.title = (offline ? '⏸ ' : pct + '% · ') + 'Uploading – ' + baseTitle;
+      document.title = offline ? '⏸ Waiting for connection – ' + baseTitle
+        : failed ? '⚠ Upload interrupted – ' + baseTitle
+        : pct + '% · Uploading – ' + baseTitle;
     }
   }
 

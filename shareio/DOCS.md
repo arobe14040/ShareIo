@@ -30,6 +30,10 @@ get a link, send it to anyone.
   4.5 minutes, and a **Retry** button appears if a file still fails.
 - **Safe uploads:** a warning before closing the tab mid-upload, and the
   screen stays awake while files upload.
+
+Browsers only allow desktop notifications and keeping the screen awake on
+secure (`https://`) pages. When you open Home Assistant over plain `http://` on
+your local network, everything else works but those two are skipped.
 - **Installable app:** add ShareIo to your home screen or desktop from the
   browser.
 
