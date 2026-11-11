@@ -36,14 +36,16 @@
   // One container at the end of <body>, after the app's own #main element.
   // Being inside <body> keeps our messages and buttons visible to screen
   // readers; staying outside #main keeps the app's rendering untouched.
+  // The app removes unknown nodes from <body> when it redraws, so the same
+  // element is re-attached whenever that happens (see start()).
+  var rootEl = null;
   function uiRoot() {
-    var r = document.getElementById('sio-root');
-    if (!r) {
-      r = document.createElement('div');
-      r.id = 'sio-root';
-      document.body.appendChild(r);
+    if (!rootEl) {
+      rootEl = document.createElement('div');
+      rootEl.id = 'sio-root';
     }
-    return r;
+    if (!rootEl.isConnected) document.body.appendChild(rootEl);
+    return rootEl;
   }
 
   /* ---------- Toasts ---------- */
@@ -307,6 +309,11 @@
     applySystemTheme();
     enhance();
     new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
+    // Put our container back right after the app's redraw removes it, so
+    // toasts, the upload card and banners survive page changes.
+    new MutationObserver(function () {
+      if (rootEl && !rootEl.isConnected && rootEl.childNodes.length) document.body.appendChild(rootEl);
+    }).observe(document.body, { childList: true });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
