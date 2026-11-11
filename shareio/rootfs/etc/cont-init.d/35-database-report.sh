@@ -20,12 +20,14 @@ username=$(bashio::services 'mysql' 'username')
 password=$(bashio::services 'mysql' 'password')
 
 sql() {
-    MYSQL_PWD="${password}" mysql -h "${host}" -P "${port}" -u "${username}" \
+    MYSQL_PWD="${password}" mariadb -h "${host}" -P "${port}" -u "${username}" \
         --batch --skip-column-names "$@" 2>&1
 }
 log_rows() {
     local line
     while IFS= read -r line; do
+        # Skip client notices that are not part of the report
+        [[ "${line}" == *"Deprecated program name"* || "${line}" == *"ssl-verify-server-cert"* ]] && continue
         bashio::log.info "  ${line//$'\t'/  |  }"
     done
 }

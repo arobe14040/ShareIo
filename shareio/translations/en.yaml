@@ -70,6 +70,12 @@ configuration:
       Writes database sizes and the shares and files stored in the database
       (also from the older Sharry add-on) to the Log tab on the next start,
       then switches itself off. Read-only.
+  delete_old_sharry_database:
+    name: Delete old Sharry database on next start
+    description: >-
+      Deletes the database left in the MariaDB add-on by the older Sharry
+      add-on, including its shares and files, then switches itself off.
+      ShareIo's own data is not touched. Cannot be undone.
   server_overrides:
     name: Server setting overrides
     description: >-
