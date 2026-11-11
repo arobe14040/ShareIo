@@ -18,7 +18,7 @@ RUN set -eux; \
         unzip \
         ; \
     mkdir -p /opt; \
-    curl -s -J -L -o /tmp/server.zip \
+    curl -fsSL -o /tmp/server.zip \
         "https://github.com/eikek/sharry/releases/download/v${SERVER_VERSION}/sharry-restserver-${SERVER_VERSION}.zip"; \
     unzip /tmp/server.zip -d /opt; \
     mv "/opt/sharry-restserver-${SERVER_VERSION}" /opt/shareio; \
@@ -41,6 +41,19 @@ RUN set -eux; \
     chown -R abc:abc /opt/shareio;
 
 COPY --chown=abc:abc rootfs /
+
+# QR code library for friend links (MIT, https://github.com/kazuhiko-arase/qrcode-generator)
+ARG QRCODE_VERSION=1.4.4
+ARG QRCODE_SHA1=63f771224854759329a99048806a53ed278740e7
+RUN set -eux; \
+    curl -fsSL -o /tmp/qrcode.tgz \
+        "https://registry.npmjs.org/qrcode-generator/-/qrcode-generator-${QRCODE_VERSION}.tgz"; \
+    echo "${QRCODE_SHA1}  /tmp/qrcode.tgz" | sha1sum -c -; \
+    mkdir -p /usr/share/shareio/ui/vendor; \
+    tar -xzf /tmp/qrcode.tgz -C /tmp package/qrcode.js; \
+    mv /tmp/package/qrcode.js /usr/share/shareio/ui/vendor/qrcode.js; \
+    rm -rf /tmp/qrcode.tgz /tmp/package
+
 WORKDIR /data/shareio
 
 # The server (Java + database migrations) can take a while to start

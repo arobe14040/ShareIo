@@ -17,6 +17,11 @@ There is nothing else to set up. Everything below is optional.
 - **Share files:** click **Create Share**, add files and press **Submit**. Open
   the share and choose **Share Link** to copy the link, show a QR code, save
   the QR code as an image, or use your phone's share sheet.
+- **Share with a friend:** in the sidebar, **Share Link** shows a friend link and
+  QR code. It opens the share in ShareIo for anyone with a login to your Home
+  Assistant, using your Home Assistant Cloud address or the Internet URL from
+  **Settings → System → Network** (without either, it only works at home).
+  Friends who are not Home Assistant admins can use ShareIo too.
 - **Receive files:** **Create Alias** makes an upload link that others can use
   to send you files.
 - **Add files quickly:** drag files anywhere onto the window, or paste them

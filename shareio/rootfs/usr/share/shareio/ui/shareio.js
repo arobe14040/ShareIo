@@ -227,11 +227,168 @@
     img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml);
   }
 
+  /* ---------- Friend links (sidebar panel) ----------
+   *
+   * Inside the Home Assistant sidebar, the app's own share links point to the
+   * internal ingress address, which nobody can open directly. Friend links
+   * point to the ShareIo panel on Home Assistant's own address instead, e.g.
+   *   https://ha.example.com/<panel>?shareio=/app/open/<id>
+   * Anyone with a login to this Home Assistant can open them; the panel then
+   * shows the share (see openDeepLink).
+   */
+
+  function haParent() {
+    try {
+      var p = window.parent;
+      if (!p || p === window) return null;
+      var ha = p.document.querySelector('home-assistant');
+      return ha && ha.hass ? { win: p, hass: ha.hass } : null;
+    } catch (e) {
+      return null;  // not embedded in the Home Assistant frontend
+    }
+  }
+
+  var friendBase = null;
+  // Resolves to { url, scope } where scope is 'internet' or 'home'.
+  function friendAddress() {
+    if (friendBase) return friendBase;
+    var ha = haParent();
+    friendBase = (function () {
+      if (!ha) return Promise.resolve(null);
+      var cfg = ha.hass.config || {};
+      var fallback = function () {
+        if (cfg.external_url) return { url: cfg.external_url.replace(/\/+$/, ''), scope: 'internet' };
+        return { url: ha.win.location.origin, scope: 'home' };
+      };
+      var usesCloud = (cfg.components || []).indexOf('cloud') !== -1;
+      if (!usesCloud) return Promise.resolve(fallback());
+      return ha.hass.callWS({ type: 'cloud/status' }).then(function (s) {
+        if (s && s.logged_in && s.prefs && s.prefs.remote_enabled && s.remote_domain) {
+          return { url: 'https://' + s.remote_domain, scope: 'internet' };
+        }
+        return fallback();
+      }, fallback);
+    })();
+    return friendBase;
+  }
+
+  // "/app/open/<id>?view=1" from the app's own (ingress) share URL
+  function innerPath(url) {
+    var i = (url || '').indexOf('/app/');
+    return i === -1 ? '' : url.slice(i);
+  }
+
+  function friendLink(url) {
+    var ha = haParent();
+    var path = innerPath(url);
+    if (!ha || !path) return Promise.resolve(null);
+    return friendAddress().then(function (addr) {
+      if (!addr) return null;
+      return {
+        url: addr.url + ha.win.location.pathname + '?shareio=' + encodeURIComponent(path),
+        scope: addr.scope
+      };
+    });
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function (resolve, reject) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      uiRoot().appendChild(ta);
+      ta.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      ta.remove();
+      if (ok) resolve(); else reject(new Error('copy failed'));
+    });
+  }
+
+  function qrSvgFor(text) {
+    if (typeof window.qrcode !== 'function') return '';
+    var qr = window.qrcode(0, 'M');
+    qr.addData(text);
+    qr.make();
+    return qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
+  }
+
+  // Opening a friend link: Home Assistant shows the panel's start page, so
+  // read ?shareio= from the Home Assistant address and open that page here.
+  function openDeepLink() {
+    var ha = haParent();
+    if (!ha) return;
+    var params = new URLSearchParams(ha.win.location.search);
+    var target = params.get('shareio');
+    if (!target) return;
+    params.delete('shareio');
+    var rest = params.toString();
+    try {
+      ha.win.history.replaceState(ha.win.history.state, '',
+        ha.win.location.pathname + (rest ? '?' + rest : '') + ha.win.location.hash);
+    } catch (e) { /* keep going */ }
+    // Only pages of this app, never another site or path.
+    if (!/^\/app\/[A-Za-z0-9\-_/]*(\?[A-Za-z0-9=&\-_]*)?$/.test(target)) return;
+    if (location.pathname + location.search !== prefix + target) location.replace(prefix + target);
+  }
+
+  function enhanceFriendShare(btn) {
+    var appUrl = shareUrl(btn);
+    if (!prefix || !haParent() || !innerPath(appUrl)) return false;
+    document.documentElement.classList.add('sio-friend-mode');
+
+    var box = document.createElement('div');
+    box.className = 'sio-friend';
+    box.innerHTML = '<div class="sio-friend-head">' + ICON.share +
+      '<strong>Share with a friend</strong></div>' +
+      '<div class="sio-friend-url" tabindex="0"></div>' +
+      '<div class="sio-friend-qr"></div>' +
+      '<p class="sio-friend-note"></p>';
+    btn.parentElement.appendChild(box);
+
+    var current = null;
+    friendLink(appUrl).then(function (link) {
+      if (!link) { box.remove(); return; }
+      current = link.url;
+      box.querySelector('.sio-friend-url').textContent = link.url;
+      box.querySelector('.sio-friend-qr').innerHTML = qrSvgFor(link.url);
+      box.querySelector('.sio-friend-note').textContent = link.scope === 'internet'
+        ? 'Anyone with a login to this Home Assistant can open it, from anywhere.'
+        : 'Works on your home network for anyone with a login to this Home Assistant. ' +
+          'Set up remote access (Home Assistant Cloud, or an Internet URL under ' +
+          'Settings → System → Network) to share outside your home.';
+    });
+
+    // Copy the friend link instead of the internal address; this runs before
+    // the app's own copy handler, which is stopped.
+    btn.addEventListener('click', function (ev) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      var link = current;
+      if (!link) return;
+      copyText(link).then(function () {
+        toast('Friend link copied');
+      }, function () {
+        toast('Copy failed – select the link and copy it', { icon: 'warn' });
+      });
+    });
+    btn.dataset.sioFriend = '1';
+    btn._sioFriendUrl = function () { return current; };
+    return true;
+  }
+
   function enhanceShareLink() {
     $all('#share-copy-to-clipboard-btn, [id$="copy-to-clipboard-btn"]').forEach(function (btn) {
       if (btn.dataset.sio) return;
       btn.dataset.sio = '1';
-      btn.addEventListener('click', function () { toast('Link copied'); });
+      if (!enhanceFriendShare(btn)) {
+        btn.addEventListener('click', function () { toast('Link copied'); });
+      }
 
       var bar = document.createElement('div');
       bar.className = 'sio-actions';
@@ -242,7 +399,7 @@
         s.className = 'sio-btn';
         s.innerHTML = ICON.share + '<span>Share&hellip;</span>';
         s.addEventListener('click', function () {
-          var url = shareUrl(btn);
+          var url = btn._sioFriendUrl ? btn._sioFriendUrl() : shareUrl(btn);
           if (url) navigator.share({ title: 'Files shared with ShareIo', url: url }).catch(function () {});
         });
         bar.appendChild(s);
@@ -306,6 +463,7 @@
   }
 
   function start() {
+    openDeepLink();
     applySystemTheme();
     enhance();
     new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });

@@ -1,7 +1,7 @@
 ---
 name: ShareIo
 url: https://github.com/arobe14040/ShareIo
-version: 3.4.0
+version: 3.5.0
 slug: shareio
 arch:
   - aarch64
@@ -15,6 +15,9 @@ ingress: true
 ingress_stream: true
 panel_icon: mdi:share-variant
 panel_title: ShareIo
+# Let every Home Assistant user (not only admins) open ShareIo; each one gets
+# their own ShareIo account through the automatic Home Assistant login.
+panel_admin: false
 # Not published by default: the sidebar panel needs no port. Publish it under
 # Network only to share links with people outside Home Assistant.
 ports:
