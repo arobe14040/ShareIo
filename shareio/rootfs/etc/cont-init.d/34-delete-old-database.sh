@@ -8,6 +8,8 @@
 # database is never touched. The option switches itself off afterwards.
 # ==============================================================================
 bashio::config.true 'delete_old_sharry_database' || exit 0
+# A failure is logged; it must not stop the add-on from starting.
+set +o errexit +o pipefail
 bashio::config.is_empty 'remote_db_host' || {
     bashio::log.warning 'Deleting the old Sharry database only works with the MariaDB add-on; skipped.'
     bashio::addon.option 'delete_old_sharry_database'
@@ -24,7 +26,7 @@ sql() {
         --batch --skip-column-names "$@"
 }
 
-if [[ -z "$(sql -e "SHOW DATABASES LIKE 'sharry';")" ]]; then
+if [[ "$(sql -e "SELECT COUNT(*) FROM information_schema.schemata WHERE schema_name = 'sharry';" 2>/dev/null)" != 1 ]]; then
     bashio::log.info "No old 'sharry' database found; nothing to delete."
 else
     size=$(sql -e "SELECT ROUND(COALESCE(SUM(data_length + index_length), 0) / 1048576)

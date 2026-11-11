@@ -8,6 +8,8 @@
 # the option off again. Nothing is changed. Credentials never leave the add-on.
 # ==============================================================================
 bashio::config.true 'database_report' || exit 0
+# Informational only: a failed query must never stop the add-on from starting.
+set +o errexit +o pipefail
 bashio::config.is_empty 'remote_db_host' || {
     bashio::log.warning 'Database report only works with the MariaDB add-on; skipped.'
     bashio::addon.option 'database_report'
@@ -38,10 +40,15 @@ sql -e "SELECT table_schema, ROUND(SUM(data_length + index_length) / 1048576)
         FROM information_schema.tables
         GROUP BY table_schema ORDER BY 2 DESC;" | log_rows
 
+db_exists() {
+    # Count only; client notices on stderr must not count as a result.
+    [[ "$(MYSQL_PWD="${password}" mariadb -h "${host}" -P "${port}" -u "${username}" \
+        --batch --skip-column-names \
+        -e "SELECT COUNT(*) FROM information_schema.schemata WHERE schema_name = '$1';" 2>/dev/null)" == 1 ]]
+}
+
 for db in sharry shareio; do
-    if [[ -z "$(sql -e "SHOW DATABASES LIKE '${db}';")" ]]; then
-        continue
-    fi
+    db_exists "${db}" || continue
     bashio::log.info "---------- Database '${db}' ----------"
     bashio::log.info 'Shares (name | owner | created | files | expected size):'
     sql "${db}" -e "SELECT COALESCE(s.name_, CONCAT('(unnamed) ', LEFT(s.id, 8))),
