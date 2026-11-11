@@ -49,7 +49,7 @@ for db in sharry shareio; do
                     LEFT JOIN share_file sf ON sf.share_id = s.id
                     GROUP BY s.id ORDER BY s.created;" | log_rows
     # ShareIo keeps file contents on disk; only the old database stores them here.
-    [[ "" == sharry ]] || continue
+    [[ "${db}" == sharry ]] || continue
     bashio::log.info 'Files (name | expected bytes | bytes stored in database | status):'
     sql "${db}" -e "SELECT sf.filename, sf.real_size,
                            COALESCE(c.stored, 0),
